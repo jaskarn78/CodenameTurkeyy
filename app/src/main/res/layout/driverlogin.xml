@@ -12,7 +12,7 @@
         android:layout_width="130dp"
         android:layout_height="130dp"
         android:layout_marginTop="40dp"
-        android:src="@drawable/komalslogo" />
+        android:src="@drawable/truck" />
 
     <Button
         android:id="@+id/driverLogin"

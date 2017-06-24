@@ -75,6 +75,11 @@ public class UserType extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void userLogin(){
+        Intent intent = new Intent(this, UserActivity.class);
+        startActivity(intent);
+    }
+
 
     private void showSignupForm() {
         PercentRelativeLayout.LayoutParams paramsLogin = (PercentRelativeLayout.LayoutParams) llSignin.getLayoutParams();
@@ -92,6 +97,9 @@ public class UserType extends AppCompatActivity {
         tvSigninInvoker.setVisibility(View.VISIBLE);
         Animation translate= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.translate_right_to_left);
         llSignup.startAnimation(translate);
+
+        Animation clockwise= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_right_to_left);
+        userLoginBtn.startAnimation(clockwise);
 
     }
     private void showSigninForm() {
@@ -111,5 +119,8 @@ public class UserType extends AppCompatActivity {
 
         tvSignupInvoker.setVisibility(View.VISIBLE);
         tvSigninInvoker.setVisibility(View.GONE);
+
+        Animation clockwise= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_right_to_left);
+        driverLoginBtn.startAnimation(clockwise);
     }
 }
