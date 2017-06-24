@@ -3,4 +3,17 @@
     <string name="title_activity_driver">DriverActivity</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
+    <string name="upload_menu">Upload Menu</string>
+    <string name="food_type">Food Type</string>
+
+    <string-array name="food_spinner">
+        <item>Food Type</item>
+        <item>Mexican</item>
+        <item>BBQ</item>
+        <item> Vegiterian</item>
+        <item>Desserts</item>
+        <item>Hot Dog Stand</item>
+        <item>Seafood</item>
+        <item>American</item>
+    </string-array>
 </resources>
