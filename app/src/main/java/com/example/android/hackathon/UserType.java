@@ -1,17 +1,14 @@
 package com.example.android.hackathon;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import com.example.android.hackathon.R;
 
-public class MainActivity extends AppCompatActivity {
+public class UserType extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Intent intent = new Intent(this, UserType.class);
-        startActivity(intent);
+        setContentView(R.layout.activity_user_type);
     }
 }
