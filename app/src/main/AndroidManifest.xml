@@ -15,9 +15,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserType" />
+        <activity
+            android:name=".UserType">
+        </activity>
         <activity android:name=".UserActivity" />
-        <activity android:name=".DriverActivity"></activity>
+        <activity android:name=".DriverActivity"/>
     </application>
 
 </manifest>
