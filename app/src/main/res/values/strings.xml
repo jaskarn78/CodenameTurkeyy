@@ -4,7 +4,7 @@
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
     <string name="upload_menu">Upload Menu</string>
-    <string name="food_type">Food Type</string>
+    <string name="google_maps_key">AIzaSyCBE7YserUYbz3jhH9C8pDKYW1-9yi98Xc</string>
 
     <string-array name="food_spinner">
         <item>Food Type</item>
