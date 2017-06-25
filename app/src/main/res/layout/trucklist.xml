@@ -1,0 +1,69 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:padding="6dip" >
+
+    <ImageView
+        android:id="@+id/truck_image_list"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitXY"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/truck"
+        android:contentDescription="TODO"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toRightOf="@id/truck_image_list">
+
+
+    <TextView
+        android:id="@+id/truck_name_list"
+        android:layout_width="fill_parent"
+        android:layout_height="26dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/truck_image_list"
+        android:layout_marginStart="10dp"
+        android:gravity="center_vertical"
+        android:ellipsize="marquee"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:text="Description"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/truck_type_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/truck_name_list"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toRightOf="@id/truck_image_list"
+        android:textColor="@color/white"
+        android:gravity="center_vertical"
+        android:text="Example application"
+        android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <ImageButton
+        android:id="@+id/truckfollowList"
+        android:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textSize="14sp"
+        android:background="@null"
+        android:gravity="center_vertical|right"
+        android:src="@drawable/ic_info_outline_white_24dp"
+        android:layout_alignParentRight="true"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"/>
+
+</RelativeLayout>

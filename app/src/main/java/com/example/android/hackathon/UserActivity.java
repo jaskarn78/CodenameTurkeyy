@@ -1,13 +1,25 @@
 package com.example.android.hackathon;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.DragEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +33,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +50,10 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ImageButton truckButton;
     private TextView truckName;
     private ImageView truckImage;
+    private SlidingUpPanelLayout slidingPanel;
+    private LinearLayout dragView;
+    private int clickedPosition=0;
+    private ListView listView;
     private class Truck {
         private String _name;
         private String _type;
@@ -45,6 +62,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         private String _image;
         private double _lat;
         private double _long;
+        private Drawable _icon;
 
 
         public void setName(String name) { _name = name; }
@@ -54,6 +72,13 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void setImage(String val) { _image = val; }
         public void setLat(double val) { _lat = val; }
         public void setLong(double val) { _long = val; }
+        public void setIcon(int val) {
+            try {
+                _icon = getDrawable(val);
+            } catch (Resources.NotFoundException ex) {
+                ex.getMessage();
+            }
+        }
 
         public String getName() {return _name; }
         public String getType() {return _type; }
@@ -62,6 +87,8 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         public String getImage() {return _image; }
         public double getLat() {return _lat; }
         public double getLong() {return _long; }
+        public Drawable getIcon() { return _icon; }
+
     }
 
     @Override
@@ -69,10 +96,36 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
         truckButton = (ImageButton)findViewById(R.id.truckfollow);
-        truckButton.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+        truckButton.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 
-        truckName = (TextView)findViewById(R.id.truck_name);
         truckImage = (ImageView)findViewById(R.id.truck_image);
+        truckName = (TextView)findViewById(R.id.truckname);
+
+        dragView = (LinearLayout)findViewById(R.id.dragInfo);
+        listView = (ListView)findViewById(R.id.list);
+
+        slidingPanel = (SlidingUpPanelLayout)findViewById(R.id.sliding_layout);
+        slidingPanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+        slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+
+            }
+
+            @Override
+            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+               if(newState.equals(SlidingUpPanelLayout.PanelState.EXPANDED) || newState.equals(SlidingUpPanelLayout.PanelState.DRAGGING)){
+                   dragView.setVisibility(View.GONE);
+               }else{
+                   dragView.setVisibility(View.VISIBLE);
+               }
+            }
+        });
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -94,21 +147,51 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 temp.setLat(json_data.getDouble("Lat"));
                 temp.setLong(json_data.getDouble("Lon"));
 
+                switch (temp.getType()) {
+                    case "Mexican":
+                        temp.setIcon(R.drawable.taco_truck_marker);
+                        break;
+                    case "American":
+                        temp.setIcon(R.drawable.burger_truck_marker);
+                        break;
+                    case "Desserts":
+                        temp.setIcon(R.drawable.twinkie_truck_marker);
+                        break;
+                    case "Seafood":
+                        temp.setIcon(R.drawable.twinkie_truck_marker);
+                        break;
+                    case "Pizza":
+                        temp.setIcon(R.drawable.pizza_truck_marker);
+                        break;
+                    default:
+                        temp.setIcon(R.drawable.spec_truck_marker);
+                }
                 truckList.add(i, temp);
                 latlngs.add(new LatLng(temp.getLat(), temp.getLong()));
                 titles.add(temp.getName());
             }
 
 
+            TruckAdapter adapter = new TruckAdapter(this, truckList);
+            listView.setAdapter(adapter);
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        truckButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), truckList.get(clickedPosition).getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         googleMap.getUiSettings().setCompassEnabled(false);
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -121,20 +204,56 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         for(int i=0; i<latlngs.size(); i++){
             markerOptions.position(latlngs.get(i));
             markerOptions.title(titles.get(i));
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.truckpin));
             googleMap.addMarker(markerOptions);
-            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    int position = Integer.parseInt(marker.getId().replace("m", ""));
-                    truckName.setText(truckList.get(position).getName());
-                    //Glide.with(UserActivity.this)
-                      //      .load(truckList.get(position).getImage()).into(truckImage);
+        }
 
-                    return false;
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                int position = Integer.parseInt(marker.getId().replace("m", ""));
+                clickedPosition=position;
+                truckName.setText(marker.getTitle());
+                Glide.with(UserActivity.this)
+                      .load(truckList.get(position).getImage()).into(truckImage);
+                truckButton.setVisibility(View.VISIBLE);
+
+                return false;
+            }
+        });
+
+    }
+    class TruckAdapter extends ArrayAdapter<Truck> {
+        public TruckAdapter(Context context, ArrayList<Truck> trucks) {
+            super(context, 0, trucks);
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            // Get the data item for this position
+            Truck truck = getItem(position);
+            // Check if an existing view is being reused, otherwise inflate the view
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.trucklist, parent, false);
+            }
+            // Lookup view for data population
+            TextView tvName = (TextView) convertView.findViewById(R.id.truck_type_list);
+            TextView tvHome = (TextView) convertView.findViewById(R.id.truck_name_list);
+            ImageView tvImage = (ImageView) convertView.findViewById(R.id.truck_image_list);
+            // Populate the data into the template view using the data object
+            tvName.setText(truck.getName());
+            tvHome.setText(truck.getType());
+            Glide.with(getApplicationContext()).load(truck.getImage()).into(tvImage);
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), getItem(position).getName(), Toast.LENGTH_SHORT).show();
                 }
             });
-
+            // Return the completed view to render on screen
+            return convertView;
         }
     }
+
+
 }

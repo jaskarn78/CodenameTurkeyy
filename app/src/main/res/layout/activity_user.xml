@@ -54,13 +54,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="68dp"
+            android:visibility="visible"
+            android:id="@+id/dragInfo"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_gravity="left"
-                android:layout_marginStart="8dp"
+                android:layout_margin="5dp"
                 android:id="@+id/truck_image"
                 android:src="@drawable/truck"
                 android:scaleType="fitXY"/>
@@ -70,19 +72,21 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textSize="14sp"
+                android:textSize="25sp"
                 android:textColor="@color/white"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"/>
+                android:gravity="center"
+                android:text="Select a food truck!"
+                />
 
             <ImageButton
                 android:id="@+id/truckfollow"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textSize="14sp"
+                android:background="@null"
                 android:gravity="center_vertical|right"
-                android:src="@drawable/ic_play_arrow_white_24dp"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:src="@drawable/ic_info_outline_white_24dp"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"/>
 
