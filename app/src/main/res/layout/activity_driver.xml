@@ -28,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:inputType="textPersonName"
+        android:backgroundTint="@android:color/black"
         android:hint="Truck Name"
         android:textSize="26sp"
         android:layout_marginTop="16dp"
@@ -37,9 +38,9 @@
         android:id="@+id/food_spinner"
         android:layout_width="match_parent"
         android:layout_height="70dp"
+        android:textSize="26dp"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/truck_name"/>
-
 
     <Switch
         android:id="@+id/driver_active_toggle"
@@ -48,8 +49,10 @@
         android:layout_gravity="center"
         android:text="Set Active"
         android:textSize="26sp"
+        android:theme="@style/truck_switch"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/food_spinner"/>
+
 
     <LinearLayout
         android:id="@+id/upload_menu_layout"
