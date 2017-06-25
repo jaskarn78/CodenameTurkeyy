@@ -3,14 +3,8 @@ package com.example.android.hackathon;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.DragEvent;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,7 +55,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         private String _image;
         private double _lat;
         private double _long;
-        private Drawable _icon;
+        private int _icon;
 
 
         public void setName(String name) { _name = name; }
@@ -74,7 +67,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void setLong(double val) { _long = val; }
         public void setIcon(int val) {
             try {
-                _icon = getDrawable(val);
+                _icon = val;
             } catch (Resources.NotFoundException ex) {
                 ex.getMessage();
             }
@@ -87,7 +80,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         public String getImage() {return _image; }
         public double getLat() {return _lat; }
         public double getLong() {return _long; }
-        public Drawable getIcon() { return _icon; }
+        public int getIcon() { return _icon; }
 
     }
 
@@ -114,7 +107,6 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
-
             }
 
             @Override
@@ -204,6 +196,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         for(int i=0; i<latlngs.size(); i++){
             markerOptions.position(latlngs.get(i));
             markerOptions.title(titles.get(i));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(truckList.get(i).getIcon()));
             googleMap.addMarker(markerOptions);
         }
 
