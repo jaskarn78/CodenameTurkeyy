@@ -128,8 +128,8 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public boolean onMarkerClick(Marker marker) {
                     int position = Integer.parseInt(marker.getId().replace("m", ""));
                     truckName.setText(truckList.get(position).getName());
-                    Glide.with(UserActivity.this)
-                            .load(truckList.get(position).getImage()).into(truckImage);
+                    //Glide.with(UserActivity.this)
+                      //      .load(truckList.get(position).getImage()).into(truckImage);
 
                     return false;
                 }
