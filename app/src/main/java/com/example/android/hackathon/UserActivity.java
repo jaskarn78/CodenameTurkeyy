@@ -1,11 +1,17 @@
 package com.example.android.hackathon;
 
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -13,6 +19,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -27,6 +34,9 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     private MarkerOptions markerOptions = new MarkerOptions();
     private ArrayList<LatLng> latlngs = new ArrayList<>();
     private ArrayList<String> titles = new ArrayList<>();
+    private ImageButton truckButton;
+    private TextView truckName;
+    private ImageView truckImage;
     private class Truck {
         private String _name;
         private String _type;
@@ -58,6 +68,16 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+        truckButton = (ImageButton)findViewById(R.id.truckfollow);
+        truckButton.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+
+        truckName = (TextView)findViewById(R.id.truck_name);
+        truckImage = (ImageView)findViewById(R.id.truck_image);
+
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         try {
             JSONObject jobj = new JSONObject(jsonString);
@@ -85,9 +105,6 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
 
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
-            mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -106,6 +123,18 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             markerOptions.title(titles.get(i));
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.truckpin));
             googleMap.addMarker(markerOptions);
+            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    int position = Integer.parseInt(marker.getId().replace("m", ""));
+                    truckName.setText(truckList.get(position).getName());
+                    Glide.with(UserActivity.this)
+                            .load(truckList.get(position).getImage()).into(truckImage);
+
+                    return false;
+                }
+            });
+
         }
     }
 }

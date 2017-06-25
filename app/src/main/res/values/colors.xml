@@ -11,6 +11,7 @@
     <color name="transyellow">#30ffca08</color>
     <color name="gray_overlay">#99303030</color>
     <color name="black">#ff000000</color>
+    <color name="white">#ffffff</color>
 
 
 </resources>
