@@ -29,8 +29,6 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             JSONArray jarr = jobj.getJSONArray("Sheet1");
 
             JSONObject json_data = jarr.getJSONObject(0);
-//            JSONArray jarr  = new JSONArray(jobj.get("Sheet1"));
-//            JSONObject ind  = new JSONObject(jarr.get(0).toString());
 
             Toast.makeText(this, json_data.getString("Name"), Toast.LENGTH_SHORT).show();
         } catch (JSONException e) {
