@@ -20,6 +20,10 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.SignInButton;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class UserType extends AppCompatActivity {
@@ -49,7 +53,9 @@ public class UserType extends AppCompatActivity {
         if (!EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
             String perms[] = {  Manifest.permission.ACCESS_FINE_LOCATION,
                                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                                Manifest.permission.CAMERA};
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.INTERNET
+            };
             EasyPermissions.requestPermissions(this, "This app requires location services", RC_LOCATION_SERVICE, perms);
         }
 

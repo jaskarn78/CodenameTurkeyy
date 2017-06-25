@@ -10,10 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
-import com.esafirm.imagepicker.features.camera.CameraModule;
-import com.esafirm.imagepicker.features.camera.DefaultCameraModule;
-import com.esafirm.imagepicker.features.camera.ImmediateCameraModule;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -89,8 +85,7 @@ public class DriverActivity extends AppCompatActivity {
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DefaultCameraModule cameraModule = new DefaultCameraModule(); // or ImmediateCameraModule
-                startActivityForResult(cameraModule.getCameraIntent(DriverActivity.this), RC_CAMERA);
+
             }
         });
     }
