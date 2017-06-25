@@ -43,11 +43,13 @@ public class UserType extends AppCompatActivity {
         FacebookSdk.sdkInitialize(this);
         setContentView(R.layout.activity_user_type);
 
+        // Create Permissions
         if (!EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
             String perms[] = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
             EasyPermissions.requestPermissions(this, "This app requires location services", RC_LOCATION_SERVICE, perms);
         }
 
+        // Login Buttons
         userLoginBtn=(Button)findViewById(R.id.userLogin);
         driverLoginBtn=(Button)findViewById(R.id.driverLogin);
         driverLoginBtn.setOnClickListener(new View.OnClickListener() {

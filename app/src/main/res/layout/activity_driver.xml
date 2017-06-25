@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,6 +14,13 @@
     android:paddingRight="16dp"
     tools:context="com.example.android.hackathon.DriverActivity">
 
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView2"
+        android:layout_width="match_parent"
+        android:layout_height="225dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        />
 
     <EditText
         android:id="@+id/truck_name"
@@ -19,15 +30,14 @@
         android:inputType="textPersonName"
         android:hint="Truck Name"
         android:textSize="26sp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/mapView2"/>
 
     <com.jaredrummler.materialspinner.MaterialSpinner
         android:id="@+id/food_spinner"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
+        android:layout_marginTop="16dp"
         android:layout_below="@+id/truck_name"/>
 
 
@@ -38,8 +48,7 @@
         android:layout_gravity="center"
         android:text="Set Active"
         android:textSize="26sp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
+        android:layout_marginTop="16dp"
         android:layout_below="@+id/food_spinner"/>
 
     <LinearLayout
@@ -47,11 +56,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
         android:layout_below="@+id/driver_active_toggle"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="16dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true">
 
@@ -68,18 +74,16 @@
         <ImageButton
             android:id="@+id/upload_menu_button"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
             app:srcCompat="@android:drawable/ic_menu_upload" />
     </LinearLayout>
 
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView2"
+    <ImageView
+        android:id="@+id/upload_image_view"
         android:layout_width="match_parent"
-        android:layout_height="225dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        />
-
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upload_menu_layout"/>
 
 </RelativeLayout>
+</ScrollView>
