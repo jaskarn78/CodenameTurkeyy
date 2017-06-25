@@ -29,14 +29,16 @@ import java.util.List;
 
 public class DriverActivity extends AppCompatActivity {
     private static final int GET_FROM_GALLERY = 3;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private MaterialSpinner food_spinner;
     private String[] food_array;
     private MapView driver_map;
     private GoogleMap googleMap;
     private GPSTracker gpsTracker;
-    private ImageButton uploadBtn;
+    private ImageButton uploadBtn, cameraBtn;
     private ImageView menuImage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,15 @@ public class DriverActivity extends AppCompatActivity {
         driver_map.onResume();
 
         setupMap();
+
+        cameraBtn = (ImageButton)findViewById(R.id.camera_menu_button);
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /***** Upload Images ******/
+
+            }
+        });
 
         uploadBtn = (ImageButton)findViewById(R.id.upload_menu_button);
         uploadBtn.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +119,14 @@ public class DriverActivity extends AppCompatActivity {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+        }
+    }
+
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
 }
