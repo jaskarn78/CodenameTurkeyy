@@ -1,10 +1,10 @@
 package com.example.android.hackathon;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.percent.PercentLayoutHelper;
 import android.support.percent.PercentRelativeLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -14,10 +14,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.android.hackathon.R;
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.SignInButton;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class UserType extends AppCompatActivity {
     LoginButton mLoginButton;
@@ -29,15 +30,26 @@ public class UserType extends AppCompatActivity {
     private LinearLayout llSignin;
     private SignInButton signInButton;
 
+    private static final int RC_LOCATION_SERVICE = 123;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);        FacebookSdk.sdkInitialize(this);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        FacebookSdk.sdkInitialize(this);
         setContentView(R.layout.activity_user_type);
 
+        // Create Permissions
+        if (!EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            String perms[] = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+            EasyPermissions.requestPermissions(this, "This app requires location services", RC_LOCATION_SERVICE, perms);
+        }
+
+        // Login Buttons
         userLoginBtn=(Button)findViewById(R.id.userLogin);
         userLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override

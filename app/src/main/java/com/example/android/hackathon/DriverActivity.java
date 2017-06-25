@@ -1,20 +1,42 @@
 package com.example.android.hackathon;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.jaredrummler.materialspinner.MaterialSpinner;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class DriverActivity extends AppCompatActivity {
-    private Spinner food_spinner;
+    private static final int GET_FROM_GALLERY = 3;
+
+    private MaterialSpinner food_spinner;
     private String[] food_array;
     private MapView driver_map;
     private GoogleMap googleMap;
+    private GPSTracker gpsTracker;
+    private ImageButton uploadBtn;
+    private ImageView menuImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,32 +44,37 @@ public class DriverActivity extends AppCompatActivity {
         setContentView(R.layout.activity_driver);
 
         MapsInitializer.initialize(this);
+        gpsTracker = new GPSTracker(this);
+
+        menuImage = (ImageView) findViewById(R.id.upload_image_view);
 
         /******   Create Spinner    ******/
-        food_spinner = (Spinner)findViewById(R.id.food_spinner);
+        food_spinner = (MaterialSpinner)findViewById(R.id.food_spinner);
+        food_spinner.setTextColor(getColor(R.color.black));
+        food_spinner.setBackgroundColor(getColor(R.color.cardview_light_background));
+
+        String[] arr = getResources().getStringArray(R.array.food_spinner);
+
+        List<String> spinList = new ArrayList<String>(Arrays.asList(arr));
+
+        food_spinner.setItems(spinList);
         // Create spinner adapter
-        ArrayAdapter<CharSequence> spinner_adapter = ArrayAdapter.createFromResource(this,
-                R.array.food_spinner, android.R.layout.simple_spinner_item);
-        spinner_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Attach adapter to spinner
-        food_spinner.setAdapter(spinner_adapter);
-//        food_Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//            }
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-//                if (pos == 0) {
-//                }else {
-//                    // Your code to process the selection
-//                }
-//            }
-//        });
         driver_map = (MapView)findViewById(R.id.mapView2);
         driver_map.onCreate(savedInstanceState);
         driver_map.onResume();
 
         setupMap();
+
+        uploadBtn = (ImageButton)findViewById(R.id.upload_menu_button);
+        uploadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /***** Upload Images ******/
+                startActivityForResult(new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+            }
+        });
     }
 
     private void setupMap(){
@@ -55,11 +82,32 @@ public class DriverActivity extends AppCompatActivity {
             @Override
             public void onMapReady(GoogleMap gMap) {
                 googleMap=gMap;
-                //LatLng eventCoords = new LatLng(eventLat, eventLng);
-                //googleMap.addMarker(new MarkerOptions().position(eventCoords).title(eventName));
-                //CameraUpdate update = CameraUpdateFactory.newLatLngZoom(eventCoords, 10);
-                //googleMap.animateCamera(update);
+                LatLng eventCoords = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
+                googleMap.addMarker(new MarkerOptions().position(eventCoords).title("Current Loc"));
+                CameraUpdate update = CameraUpdateFactory.newLatLngZoom(eventCoords, 15);
+                googleMap.animateCamera(update);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //Detects request codes
+        if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
+            Uri selectedImage = data.getData();
+            Bitmap bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                menuImage.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 }
