@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.esafirm.imagepicker.features.camera.CameraModule;
+import com.esafirm.imagepicker.features.camera.DefaultCameraModule;
+import com.esafirm.imagepicker.features.camera.ImmediateCameraModule;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +42,8 @@ public class DriverActivity extends AppCompatActivity {
     private GPSTracker gpsTracker;
     private ImageButton uploadBtn, cameraBtn;
     private ImageView menuImage;
-    private String mCurrentPhotoPath;
+    private static final int RC_CAMERA = 3000;
+
 
 
     @Override
@@ -52,7 +57,7 @@ public class DriverActivity extends AppCompatActivity {
         menuImage = (ImageView) findViewById(R.id.upload_image_view);
 
         /******   Create Spinner    ******/
-        food_spinner = (MaterialSpinner)findViewById(R.id.food_spinner);
+        food_spinner = (MaterialSpinner) findViewById(R.id.food_spinner);
         food_spinner.setTextColor(getColor(R.color.black));
         food_spinner.setBackgroundColor(getColor(R.color.cardview_light_background));
 
@@ -63,13 +68,13 @@ public class DriverActivity extends AppCompatActivity {
         food_spinner.setItems(spinList);
         // Create spinner adapter
         // Attach adapter to spinner
-        driver_map = (MapView)findViewById(R.id.mapView2);
+        driver_map = (MapView) findViewById(R.id.mapView2);
         driver_map.onCreate(savedInstanceState);
         driver_map.onResume();
 
         setupMap();
 
-        cameraBtn = (ImageButton)findViewById(R.id.camera_menu_button);
+        cameraBtn = (ImageButton) findViewById(R.id.camera_menu_button);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,14 +85,12 @@ public class DriverActivity extends AppCompatActivity {
             }
         });
 
-        uploadBtn = (ImageButton)findViewById(R.id.upload_menu_button);
+        uploadBtn = (ImageButton) findViewById(R.id.upload_menu_button);
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                startActivityForResult(new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI),
-                        GET_FROM_GALLERY);
+                DefaultCameraModule cameraModule = new DefaultCameraModule(); // or ImmediateCameraModule
+                startActivityForResult(cameraModule.getCameraIntent(DriverActivity.this), RC_CAMERA);
             }
         });
     }
@@ -104,6 +107,8 @@ public class DriverActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -126,10 +131,10 @@ public class DriverActivity extends AppCompatActivity {
             }
         }
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            /***** Upload Images ******/
-
-
+        if (requestCode == RC_CAMERA && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            menuImage.setImageBitmap(imageBitmap);
         }
     }
 
