@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import com.google.android.gms.maps.CameraUpdate;
@@ -31,7 +33,7 @@ public class DriverActivity extends AppCompatActivity {
     private static final int GET_FROM_GALLERY = 3;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    private MaterialSpinner food_spinner;
+    private MaterialSpinner food_spinner, startSpinner, endSpinner;
     private String[] food_array;
     private MapView driver_map;
     private GoogleMap googleMap;
@@ -45,6 +47,8 @@ public class DriverActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_driver);
 
         MapsInitializer.initialize(this);
@@ -56,6 +60,17 @@ public class DriverActivity extends AppCompatActivity {
         food_spinner = (MaterialSpinner) findViewById(R.id.food_spinner);
         food_spinner.setTextColor(getColor(R.color.black));
         food_spinner.setBackgroundColor(getColor(R.color.cardview_light_background));
+
+        startSpinner = (MaterialSpinner)findViewById(R.id.startTime);
+        endSpinner = (MaterialSpinner)findViewById(R.id.endTime);
+        startSpinner.setBackgroundColor(getColor(R.color.cardview_light_background));
+        endSpinner.setBackgroundColor(getColor(R.color.cardview_light_background));
+
+
+        String[] times = getResources().getStringArray(R.array.time_spinner);
+        List<String> timeList = new ArrayList<String>(Arrays.asList(times));
+        startSpinner.setItems(timeList);
+        endSpinner.setItems(timeList);
 
         String[] arr = getResources().getStringArray(R.array.food_spinner);
 

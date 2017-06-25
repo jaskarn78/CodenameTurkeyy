@@ -49,10 +49,11 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<LatLng> latlngs = new ArrayList<>();
     private ArrayList<String> titles = new ArrayList<>();
     private ArrayList<Boolean> status = new ArrayList<>();
-    private ArrayList<Double> lats = new ArrayList<>();
-    private ArrayList<Double> lngs = new ArrayList<>();
     private ArrayList<String> imgs = new ArrayList<>();
     private ArrayList<String> menus = new ArrayList<>();
+    private ArrayList<String> types = new ArrayList<>();
+    private ArrayList<Double> lats = new ArrayList<>();
+    private ArrayList<Double> lngs = new ArrayList<>();
 
     private ImageButton truckButton;
     private TextView truckName;
@@ -183,6 +184,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 lngs.add(temp.getLong());
                 titles.add(temp.getName());
                 menus.add(temp.getMenu());
+                types.add(temp.getType());
             }
 
 
@@ -196,6 +198,10 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                     intent.putStringArrayListExtra("truckNames", titles);
                     intent.putStringArrayListExtra("truckImages", imgs);
                     intent.putStringArrayListExtra("menuImages", menus);
+                    intent.putStringArrayListExtra("types", types);
+                    intent.putExtra("position", clickedPosition);
+                    intent.putExtra("lat", lats.get(clickedPosition));
+                    intent.putExtra("lng", lngs.get(clickedPosition));
                     startActivity(intent);
                 }
             });
@@ -265,7 +271,15 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), getItem(position).getName(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(UserActivity.this, ProfileActivity.class);
+                    intent.putStringArrayListExtra("truckNames", titles);
+                    intent.putStringArrayListExtra("truckImages", imgs);
+                    intent.putStringArrayListExtra("menuImages", menus);
+                    intent.putStringArrayListExtra("types", types);
+                    intent.putExtra("position", position);
+                    intent.putExtra("lat", lats.get(clickedPosition));
+                    intent.putExtra("lng", lngs.get(clickedPosition));
+                    startActivity(intent);
                 }
             });
             // Return the completed view to render on screen
