@@ -38,7 +38,6 @@ public class DriverActivity extends AppCompatActivity {
     private GPSTracker gpsTracker;
     private ImageButton uploadBtn, cameraBtn;
     private ImageView menuImage;
-    private String mCurrentPhotoPath;
 
 
     @Override
@@ -128,7 +127,6 @@ public class DriverActivity extends AppCompatActivity {
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             /***** Upload Images ******/
-
 
         }
     }
