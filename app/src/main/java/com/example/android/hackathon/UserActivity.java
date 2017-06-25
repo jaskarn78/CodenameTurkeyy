@@ -1,6 +1,7 @@
 package com.example.android.hackathon;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -47,6 +48,12 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     private MarkerOptions markerOptions = new MarkerOptions();
     private ArrayList<LatLng> latlngs = new ArrayList<>();
     private ArrayList<String> titles = new ArrayList<>();
+    private ArrayList<Boolean> status = new ArrayList<>();
+    private ArrayList<Double> lats = new ArrayList<>();
+    private ArrayList<Double> lngs = new ArrayList<>();
+    private ArrayList<String> imgs = new ArrayList<>();
+    private ArrayList<String> menus = new ArrayList<>();
+
     private ImageButton truckButton;
     private TextView truckName;
     private ImageView truckImage;
@@ -62,7 +69,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         private String _image;
         private double _lat;
         private double _long;
-        private Drawable _icon;
+        private int _icon;
 
 
         public void setName(String name) { _name = name; }
@@ -74,7 +81,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void setLong(double val) { _long = val; }
         public void setIcon(int val) {
             try {
-                _icon = getDrawable(val);
+                _icon = val;
             } catch (Resources.NotFoundException ex) {
                 ex.getMessage();
             }
@@ -87,7 +94,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         public String getImage() {return _image; }
         public double getLat() {return _lat; }
         public double getLong() {return _long; }
-        public Drawable getIcon() { return _icon; }
+        public int getIcon() { return _icon; }
 
     }
 
@@ -103,6 +110,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         dragView = (LinearLayout)findViewById(R.id.dragInfo);
         listView = (ListView)findViewById(R.id.list);
+
 
         slidingPanel = (SlidingUpPanelLayout)findViewById(R.id.sliding_layout);
         slidingPanel.setOnClickListener(new View.OnClickListener() {
@@ -126,6 +134,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                }
             }
         });
+
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -168,25 +177,33 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 truckList.add(i, temp);
                 latlngs.add(new LatLng(temp.getLat(), temp.getLong()));
+                imgs.add(temp.getImage());
+                status.add(temp.getStatus());
+                lats.add(temp.getLat());
+                lngs.add(temp.getLong());
                 titles.add(temp.getName());
+                menus.add(temp.getMenu());
             }
 
 
             TruckAdapter adapter = new TruckAdapter(this, truckList);
             listView.setAdapter(adapter);
 
+            truckButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(UserActivity.this, ProfileActivity.class);
+                    intent.putStringArrayListExtra("truckNames", titles);
+                    intent.putStringArrayListExtra("truckImages", imgs);
+                    intent.putStringArrayListExtra("menuImages", menus);
+                    startActivity(intent);
+                }
+            });
+
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        truckButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), truckList.get(clickedPosition).getName(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
     }
 
@@ -204,6 +221,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         for(int i=0; i<latlngs.size(); i++){
             markerOptions.position(latlngs.get(i));
             markerOptions.title(titles.get(i));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(truckList.get(i)._icon));
             googleMap.addMarker(markerOptions);
         }
 
