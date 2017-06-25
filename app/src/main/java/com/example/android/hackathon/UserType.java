@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import android.Manifest;
+
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.SignInButton;
@@ -45,7 +47,9 @@ public class UserType extends AppCompatActivity {
 
         // Create Permissions
         if (!EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-            String perms[] = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+            String perms[] = {  Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.CAMERA};
             EasyPermissions.requestPermissions(this, "This app requires location services", RC_LOCATION_SERVICE, perms);
         }
 
