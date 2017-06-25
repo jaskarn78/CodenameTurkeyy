@@ -1,12 +1,17 @@
 package com.example.android.hackathon;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -21,15 +26,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class DriverActivity extends AppCompatActivity {
     private static final int GET_FROM_GALLERY = 3;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int CAMERA_REQUEST = 1888;
+
 
     private MaterialSpinner food_spinner;
     private String[] food_array;
@@ -38,6 +49,12 @@ public class DriverActivity extends AppCompatActivity {
     private GPSTracker gpsTracker;
     private ImageButton uploadBtn, cameraBtn;
     private ImageView menuImage;
+    int TAKE_PICTURE = 0;
+    private Uri outputFileUri;
+    public static int count = 0;
+    String mCurrentPhotoPath;
+
+
 
 
     @Override
@@ -86,7 +103,16 @@ public class DriverActivity extends AppCompatActivity {
                         android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
             }
         });
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
     }
+
+
+
+
 
     private void setupMap(){
         driver_map.getMapAsync(new OnMapReadyCallback() {
@@ -119,14 +145,12 @@ public class DriverActivity extends AppCompatActivity {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+        }else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            menuImage.setImageBitmap(photo);
         }
     }
 
 
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
+
 }

@@ -5,6 +5,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="170dp">
@@ -22,9 +25,11 @@
             android:background="@drawable/gradientsky"/>
     </RelativeLayout>
 
-    <RelativeLayout
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
 
         <fragment
             android:id="@+id/map"
@@ -43,6 +48,7 @@
             android:layout_height="20dp"
             android:background="@drawable/gradientmap"/>
 
-    </RelativeLayout>
 
-</LinearLayout>
+    </FrameLayout>
+
+    </LinearLayout>

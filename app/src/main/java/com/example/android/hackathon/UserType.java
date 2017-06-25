@@ -49,6 +49,7 @@ public class UserType extends AppCompatActivity {
             EasyPermissions.requestPermissions(this, "This app requires location services", RC_LOCATION_SERVICE, perms);
         }
 
+
         // Login Buttons
         userLoginBtn=(Button)findViewById(R.id.userLogin);
         userLoginBtn.setOnClickListener(new View.OnClickListener() {
