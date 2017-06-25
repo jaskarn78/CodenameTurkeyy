@@ -1,5 +1,7 @@
 package com.example.android.hackathon;
 
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -22,6 +24,7 @@ public class UserActivity extends AppCompatActivity {
         private String _image;
         private double _lat;
         private double _long;
+        private Drawable _icon;
 
         public void setName(String name) { _name = name; }
         public void setType(String type) { _type = type; }
@@ -30,6 +33,13 @@ public class UserActivity extends AppCompatActivity {
         public void setImage(String val) { _image = val; }
         public void setLat(double val) { _lat = val; }
         public void setLong(double val) { _long = val; }
+        public void setIcon(int val) {
+            try {
+                _icon = getDrawable(val);
+            } catch (Resources.NotFoundException ex) {
+                ex.getMessage();
+            }
+        }
 
         public String getName() {return _name; }
         public String getType() {return _type; }
@@ -38,6 +48,7 @@ public class UserActivity extends AppCompatActivity {
         public String getImage() {return _image; }
         public double getLat() {return _lat; }
         public double getLong() {return _long; }
+        public Drawable getIcon() { return _icon; }
     }
 
     @Override
@@ -61,6 +72,26 @@ public class UserActivity extends AppCompatActivity {
                 temp.setImage(json_data.getString("Image"));
                 temp.setLat(json_data.getDouble("Lat"));
                 temp.setLong(json_data.getDouble("Lon"));
+
+                switch (temp.getType()) {
+                    case "Mexican":
+                        temp.setIcon(R.drawable.taco_truck_marker);
+                        break;
+                    case "American":
+                        temp.setIcon(R.drawable.burger_truck_marker);
+                        break;
+                    case "Desserts":
+                        temp.setIcon(R.drawable.twinkie_truck_marker);
+                        break;
+                    case "Seafood":
+                        temp.setIcon(R.drawable.twinkie_truck_marker);
+                        break;
+                    case "Pizza":
+                        temp.setIcon(R.drawable.pizza_truck_marker);
+                        break;
+                    default:
+                        temp.setIcon(R.drawable.spec_truck_marker);
+                }
 
                 truckList.add(i, temp);
             }
