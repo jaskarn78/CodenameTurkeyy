@@ -39,6 +39,12 @@ public class UserType extends AppCompatActivity {
         setContentView(R.layout.activity_user_type);
 
         userLoginBtn=(Button)findViewById(R.id.userLogin);
+        userLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userLogin();
+            }
+        });
         driverLoginBtn=(Button)findViewById(R.id.driverLogin);
         driverLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
