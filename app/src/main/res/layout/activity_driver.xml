@@ -72,11 +72,18 @@
             android:textSize="26dp" />
 
         <ImageButton
+            android:id="@+id/camera_menu_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/ic_camera_alt_black_18dp" />
+
+        <ImageButton
             android:id="@+id/upload_menu_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
-            app:srcCompat="@android:drawable/ic_menu_upload" />
+            app:srcCompat="@drawable/ic_file_upload_black_18dp" />
     </LinearLayout>
 
     <ImageView
