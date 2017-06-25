@@ -38,6 +38,7 @@ public class DriverActivity extends AppCompatActivity {
     private GPSTracker gpsTracker;
     private ImageButton uploadBtn, cameraBtn;
     private ImageView menuImage;
+    private String mCurrentPhotoPath;
 
 
     @Override
@@ -72,8 +73,10 @@ public class DriverActivity extends AppCompatActivity {
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /***** Upload Images ******/
-
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
             }
         });
 
@@ -81,9 +84,10 @@ public class DriverActivity extends AppCompatActivity {
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /***** Upload Images ******/
+
                 startActivityForResult(new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+                        android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI),
+                        GET_FROM_GALLERY);
             }
         });
     }
@@ -106,9 +110,10 @@ public class DriverActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         //Detects request codes
-        if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
+        if(requestCode == GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
             Uri selectedImage = data.getData();
             Bitmap bitmap = null;
+
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                 menuImage.setImageBitmap(bitmap);
@@ -120,13 +125,13 @@ public class DriverActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            /***** Upload Images ******/
 
 
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
+
+
 }
