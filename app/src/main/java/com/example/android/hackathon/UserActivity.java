@@ -60,12 +60,12 @@ public class UserActivity extends AppCompatActivity {
                 temp.setStatus(json_data.getBoolean("Status"));
                 temp.setImage(json_data.getString("Image"));
                 temp.setLat(json_data.getDouble("Lat"));
-                temp.setLong(json_data.getDouble("Long"));
+                temp.setLong(json_data.getDouble("Lon"));
 
                 truckList.add(i, temp);
             }
 
-            
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
