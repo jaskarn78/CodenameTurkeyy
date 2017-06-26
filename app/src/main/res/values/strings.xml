@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Hackathon</string>
+    <string name="app_name">Truck\'n Up</string>
     <string name="title_activity_driver">DriverActivity</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
@@ -15,5 +15,20 @@
         <item>Hot Dog Stand</item>
         <item>Seafood</item>
         <item>American</item>
+    </string-array>
+
+    <string-array name="time_spinner">
+        <item>12:00</item>
+        <item>01:00</item>
+        <item>02:00</item>
+        <item>03:00</item>
+        <item>04:00</item>
+        <item>05:00</item>
+        <item>06:00</item>
+        <item>07:00</item>
+        <item>08:00</item>
+        <item>09:00</item>
+        <item>10:00</item>
+        <item>11:00</item>
     </string-array>
 </resources>

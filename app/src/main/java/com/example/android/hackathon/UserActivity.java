@@ -1,10 +1,13 @@
 package com.example.android.hackathon;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +44,13 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     private MarkerOptions markerOptions = new MarkerOptions();
     private ArrayList<LatLng> latlngs = new ArrayList<>();
     private ArrayList<String> titles = new ArrayList<>();
+    private ArrayList<Boolean> status = new ArrayList<>();
+    private ArrayList<String> imgs = new ArrayList<>();
+    private ArrayList<String> menus = new ArrayList<>();
+    private ArrayList<String> types = new ArrayList<>();
+    private ArrayList<Double> lats = new ArrayList<>();
+    private ArrayList<Double> lngs = new ArrayList<>();
+
     private ImageButton truckButton;
     private TextView truckName;
     private ImageView truckImage;
@@ -97,6 +108,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         dragView = (LinearLayout)findViewById(R.id.dragInfo);
         listView = (ListView)findViewById(R.id.list);
 
+
         slidingPanel = (SlidingUpPanelLayout)findViewById(R.id.sliding_layout);
         slidingPanel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +119,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
+
             }
 
             @Override
@@ -118,6 +131,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                }
             }
         });
+
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -160,25 +174,38 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 truckList.add(i, temp);
                 latlngs.add(new LatLng(temp.getLat(), temp.getLong()));
+                imgs.add(temp.getImage());
+                status.add(temp.getStatus());
+                lats.add(temp.getLat());
+                lngs.add(temp.getLong());
                 titles.add(temp.getName());
+                menus.add(temp.getMenu());
+                types.add(temp.getType());
             }
 
 
             TruckAdapter adapter = new TruckAdapter(this, truckList);
             listView.setAdapter(adapter);
 
+            truckButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(UserActivity.this, ProfileActivity.class);
+                    intent.putStringArrayListExtra("truckNames", titles);
+                    intent.putStringArrayListExtra("truckImages", imgs);
+                    intent.putStringArrayListExtra("menuImages", menus);
+                    intent.putStringArrayListExtra("types", types);
+                    intent.putExtra("position", clickedPosition);
+                    intent.putExtra("lat", lats.get(clickedPosition));
+                    intent.putExtra("lng", lngs.get(clickedPosition));
+                    startActivity(intent);
+                }
+            });
+
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        truckButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), truckList.get(clickedPosition).getName(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
     }
 
@@ -196,7 +223,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         for(int i=0; i<latlngs.size(); i++){
             markerOptions.position(latlngs.get(i));
             markerOptions.title(titles.get(i));
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(truckList.get(i).getIcon()));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(truckList.get(i)._icon));
             googleMap.addMarker(markerOptions);
         }
 
@@ -240,7 +267,15 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), getItem(position).getName(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(UserActivity.this, ProfileActivity.class);
+                    intent.putStringArrayListExtra("truckNames", titles);
+                    intent.putStringArrayListExtra("truckImages", imgs);
+                    intent.putStringArrayListExtra("menuImages", menus);
+                    intent.putStringArrayListExtra("types", types);
+                    intent.putExtra("position", position);
+                    intent.putExtra("lat", lats.get(clickedPosition));
+                    intent.putExtra("lng", lngs.get(clickedPosition));
+                    startActivity(intent);
                 }
             });
             // Return the completed view to render on screen
