@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#eda65a">
 
 <RelativeLayout
     android:layout_width="match_parent"
@@ -40,7 +41,8 @@
         android:layout_height="70dp"
         android:textSize="26dp"
         android:layout_marginTop="16dp"
-        android:layout_below="@+id/truck_name"/>
+        android:layout_below="@+id/truck_name"
+        android:backgroundTint="#ffbf77"/>
 
     <Switch
         android:id="@+id/driver_active_toggle"
