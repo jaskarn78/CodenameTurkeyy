@@ -20,6 +20,8 @@ import java.util.ArrayList;
  * Created by Tommy on 6/24/17.
  */
 
+// TODO 1: Comment this block of code
+    // TODO 2: Replace hardcoded URL
 public class QueryTruckList extends AsyncTask<Void, Void, ArrayList<JSONObject>> {
     private static final String URL = "https://script.google.com/macros/s/AKfycbygukdW3tt8sCPcFDlkMnMuNu9bH5fpt7bKV50p2bM/exec?id=1jHw3XQ1OIqCVefW9uiL2jtkZQAq8EXIkkljo1bSYThk&sheet=Sheet1";
     private JSONObject truckJSON;

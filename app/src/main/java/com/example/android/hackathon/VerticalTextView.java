@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.TextView;
 
+// TODO Comment this .java file
 public class VerticalTextView extends TextView {
    final boolean topDown;
 

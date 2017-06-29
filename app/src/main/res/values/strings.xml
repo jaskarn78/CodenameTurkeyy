@@ -1,10 +1,11 @@
 <resources>
     <string name="app_name">Truck\'n Up</string>
     <string name="title_activity_driver">DriverActivity</string>
-    <string name="hello_round">Hello Round World!</string>
-    <string name="hello_square">Hello Square World!</string>
     <string name="upload_menu">Upload Menu</string>
     <string name="google_maps_key">AIzaSyCBE7YserUYbz3jhH9C8pDKYW1-9yi98Xc</string>
+    <string name="food_truck_login">Food Truck Login</string>
+    <string name="login_as_user">Login as User</string>
+    <string name="select_a_food_truck">Select a food truck!</string>
 
     <string-array name="food_spinner">
         <item>Food Type</item>

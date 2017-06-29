@@ -1,10 +1,10 @@
 package com.example.android.hackathon;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.EditText;
+import android.support.v7.app.AppCompatActivity;
 
+/** Main Activity for the application */
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -12,6 +12,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Redirect user to signin page
         Intent intent = new Intent(this, UserType.class);
         startActivity(intent);
     }
