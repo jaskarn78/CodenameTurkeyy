@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -28,6 +32,7 @@ import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,7 +66,9 @@ public class DriverActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_driver);
 
         // Initialize the Driver's position
@@ -248,7 +255,12 @@ public class DriverActivity extends AppCompatActivity {
         }
         // Checks requestCode to see if user is requesting to CAPTURE TRUCK image with camera
         else if (requestCode == REQUEST_TRUCK_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // TODO Figure out how camera capturing and image storing works
+            try {
+                setImageUpright(mCurrentPhotoPath);
+            } catch (IOException ex) {
+                Log.e("IMG_SAVE", "Error trying to save image");
+            }
+
             galleryAddPic();
         }
         // Checks requestCode to see if user would like to UPLOAD MENU image from gallery
@@ -273,10 +285,57 @@ public class DriverActivity extends AppCompatActivity {
         }
         // Checks requestCode to see if user is requesting to CAPTURE MENU image with camera
         else if(requestCode == REQUEST_MENU_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            // TODO Figure out how camera capturing and image storing works
+            try {
+                setImageUpright(mCurrentPhotoPath);
+                // set menuImage to upright bitmap
+                menuImage.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
+            } catch (IOException ex) {
+                Log.e("IMG_SAVE", "Error trying to save image");
+            }
+
             galleryAddPic();
         }
 
+    }
+
+    private static void setImageUpright(String imagepath) throws IOException{
+        FileOutputStream fos = null;
+        try {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagepath);
+            ExifInterface ei = new ExifInterface(imagepath);
+
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED);
+
+            switch (orientation) {
+
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    bitmap = rotateBitmap(bitmap, 90);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    bitmap = rotateBitmap(bitmap, 180);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    bitmap = rotateBitmap(bitmap, 270);
+                    break;
+
+                case ExifInterface.ORIENTATION_NORMAL:
+
+                default:
+                    break;
+            }
+
+            // Resave image as upright
+            File f = new File(imagepath);
+            fos = new FileOutputStream(f);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+        } catch (IOException e) {
+            e.getMessage();
+        } finally {
+            fos.close();
+        }
     }
 
     /* Creates an image file for the picture that was taken */
@@ -304,13 +363,27 @@ public class DriverActivity extends AppCompatActivity {
         return image;
     }
 
+    private static Bitmap rotateBitmap(Bitmap bitmap, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,bitmap.getWidth(),bitmap.getHeight(),true);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0,
+                scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+
+        return rotatedBitmap;
+    }
+
     /* Adds currently taken picture to the photo gallery */
+   /* Adds currently taken picture to the photo gallery */
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(mCurrentPhotoPath);
+        Bitmap bitmap = BitmapFactory.decodeFile(f.getPath());
         Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
+        MediaStore.Images.Media.insertImage(
+                getContentResolver(),
+                bitmap,
+                f.getName(),
+                f.getName());
     }
-
 }

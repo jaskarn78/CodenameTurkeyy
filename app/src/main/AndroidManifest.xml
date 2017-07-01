@@ -38,6 +38,8 @@
         <activity android:name=".UserActivity" />
         <activity
             android:name=".DriverActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             android:exported="true"></activity>
 
         <meta-data xmlns:tools="http://schemas.android.com/tools"
