@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.android.hackathon.Utilities.GPSTracker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -43,6 +44,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class UserActivity extends AppCompatActivity implements OnMapReadyCallback {
     private String allTrucksQuery;
+    // TODO Create an actual database for hosting this information
 
     private ArrayList<Truck> truckList;
     private MarkerOptions markerOptions = new MarkerOptions();
@@ -110,7 +112,6 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         public int getIcon() { return icon; }
 
     }
-
     /**
      *  Creates the UserActivity.
      * @param savedInstanceState
@@ -152,9 +153,6 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    private void parseTruckObjects(){
-
-    }
 
     /** Creates the truck array list from the hardcoded string */
     // TODO check the way this works (cleaner and
@@ -174,7 +172,6 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 temp.setLat(json_data.getDouble("truck_lat"));
                 temp.setLong(json_data.getDouble("truck_lng"));
                 temp.setIcon(temp.getType());
-
                 truckList.add(i, temp);
             }
 
@@ -242,6 +239,10 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         // TODO add inline comments to this method
         googleMap.getUiSettings().setCompassEnabled(false);
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+        //users current location, can call currentLocation.getLatitude() and
+        //currentLocation.getLongitude();
+        GPSTracker currentLocation = new GPSTracker(getApplicationContext());
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(38.579431, -121.479059)).zoom(18)
                 .tilt(67.5f).bearing(314).build();
@@ -306,7 +307,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                profileActivity();
+                    profileActivity();
                 }
             });
 

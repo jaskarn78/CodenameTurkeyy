@@ -1,4 +1,4 @@
-package com.example.android.hackathon;
+package com.example.android.hackathon.Utilities;
 
 import android.content.Context;
 import android.graphics.Canvas;

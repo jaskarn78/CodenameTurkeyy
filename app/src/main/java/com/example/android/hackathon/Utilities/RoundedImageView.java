@@ -1,4 +1,4 @@
-package com.example.android.hackathon;
+package com.example.android.hackathon.Utilities;
 
 /**
  * Created by jaskarnjagpal on 6/25/17.

@@ -29,7 +29,7 @@
             android:orientation="horizontal"
             app:layout_widthPercent="85%">
 
-            <com.example.android.hackathon.VerticalTextView
+            <com.example.android.hackathon.Utilities.VerticalTextView
                 android:id="@+id/tv_user_signin_invoker"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -58,7 +58,7 @@
             android:orientation="horizontal"
             app:layout_widthPercent="15%">
 
-            <com.example.android.hackathon.VerticalTextView
+            <com.example.android.hackathon.Utilities.VerticalTextView
                 android:id="@+id/tv_driver_sigin_invoker"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
