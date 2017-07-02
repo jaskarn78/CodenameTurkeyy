@@ -7,6 +7,8 @@
     <string name="login_as_user">Login as User</string>
     <string name="select_a_food_truck">Select a food truck!</string>
 
+    <string name="get_all_trucks_query">select * from food_truck</string>
+
     <string-array name="food_spinner">
         <item>Food Type</item>
         <item>Mexican</item>
