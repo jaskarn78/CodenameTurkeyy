@@ -44,7 +44,6 @@ import java.util.concurrent.ExecutionException;
  */
 public class UserActivity extends AppCompatActivity implements OnMapReadyCallback {
     private String allTrucksQuery;
-    // TODO Create an actual database for hosting this information
 
     private ArrayList<Truck> truckList;
     private MarkerOptions markerOptions = new MarkerOptions();
@@ -52,7 +51,6 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ImageButton truckButton;
     private TextView truckName;
     private ImageView truckImage;
-    private SlidingUpPanelLayout slidingPanel;
     private LinearLayout dragView;
     private int clickedPosition=0;
     private ListView listView;
@@ -144,6 +142,8 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    
+    /** Create and initialize the truck button */
     private void setupTruckButton() {
         truckButton = (ImageButton)findViewById(R.id.truckfollow);
         truckButton.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP);
@@ -153,9 +153,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-
     /** Creates the truck array list from the hardcoded string */
-    // TODO check the way this works (cleaner and
     private void setupTruckArrayList() {
         try {
             ArrayList<JSONObject> pulledList = new QueryJSONArray().execute(allTrucksQuery).get();
@@ -177,7 +175,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                     truckList.add(i, temp);
                 }
             }
-            
+
             // Create adapter for the truck list
             TruckAdapter adapter = new TruckAdapter(this, truckList);
             listView.setAdapter(adapter);
@@ -195,10 +193,11 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+
     // TODO Add method description comment (Does this do anything? Is this the Truck list?)
     private void setupSlidingPanels() {
         // Set SlidingPanel to the food truck list panel and add OnClickListener
-        slidingPanel = (SlidingUpPanelLayout)findViewById(R.id.food_truck_sliding_layout);
+        SlidingUpPanelLayout slidingPanel = (SlidingUpPanelLayout) findViewById(R.id.food_truck_sliding_layout);
         slidingPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -231,6 +230,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
+
 
     /**
      *  Initializes the google map, setting food truck icons where there are active food trucks.
@@ -271,6 +271,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
     }
+
 
     /**
      * Adapter for the truck list.
@@ -318,6 +319,8 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+
+    /** Creates the intent to transfer to the Profile Activity */
     private void profileActivity() {
         Intent intent = new Intent(UserActivity.this, ProfileActivity.class);
         intent.putExtra("truckName", truckList.get(clickedPosition).getName());

@@ -92,6 +92,7 @@ public class DriverActivity extends AppCompatActivity {
         setupCameraButtons();
     }
 
+
     /** Creates the dropdown selection for Food Type and Truck Active Time*/
     private void setupSpinners() {
         MaterialSpinner food_spinner, startSpinner, endSpinner;
@@ -124,6 +125,7 @@ public class DriverActivity extends AppCompatActivity {
         endSpinner.setItems(timeList);
     }
 
+
     /** Grabs GPS coordinates of Driver user and posts the marker to the map */
     private void setupMap(){
         driver_map.getMapAsync(new OnMapReadyCallback() {
@@ -137,6 +139,7 @@ public class DriverActivity extends AppCompatActivity {
             }
         });
     }
+
 
     // TODO Create an 'X' on the captured image. Giving the driver the option to not save it
     /** Create camera buttons and add onClickListeners */
@@ -301,6 +304,7 @@ public class DriverActivity extends AppCompatActivity {
 
     }
 
+
     /** Sets the image stored at 'imagepath' to the upright position */
     private static void setImageUpright(String imagepath) throws IOException{
         FileOutputStream fos = null;
@@ -342,6 +346,7 @@ public class DriverActivity extends AppCompatActivity {
         }
     }
 
+
     /** Rotates the parameter bitmap by "angle" degrees and returns the new bitmap */
     private static Bitmap rotateBitmap(Bitmap bitmap, float angle) {
         Matrix matrix = new Matrix();
@@ -352,6 +357,7 @@ public class DriverActivity extends AppCompatActivity {
 
         return rotatedBitmap;
     }
+
 
     /** Creates an image file for the picture that was taken */
     private File createImageFile(int captureId) throws IOException {
@@ -377,6 +383,7 @@ public class DriverActivity extends AppCompatActivity {
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
+
 
    /** Adds currently taken picture to the photo gallery */
     private void galleryAddPic() {

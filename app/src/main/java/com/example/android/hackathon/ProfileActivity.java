@@ -20,8 +20,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import static com.example.android.hackathon.R.id.status;
 
-// TODO Comment this .java file
-
 /**
  *   Create the Activity for the Driver Profile Page, where users will view the food truck
  *  information.
@@ -48,6 +46,7 @@ public class ProfileActivity extends AppCompatActivity {
         setupMap();
         mapView.onResume();
     }
+
 
     /** Collect the selected food truck's information and display it to the view */
     private void setupTruckInformation() {
@@ -97,8 +96,10 @@ public class ProfileActivity extends AppCompatActivity {
             }});
     }
 
+
     /** Setup the map location of the food truck */
     public void setupMap() {
+        // Display the location of the truck on a mini map
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap gMap) {

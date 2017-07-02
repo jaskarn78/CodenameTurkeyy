@@ -52,6 +52,7 @@ public class UserType extends AppCompatActivity {
         setupUserTypeSwitcher();
     }
 
+
     /** Setup user permissions */
     private void setupPermissions() {
         // Create Permissions for users (Access locational services, Camera, and Internet Access)
@@ -67,6 +68,7 @@ public class UserType extends AppCompatActivity {
                     RC_LOCATION_SERVICE, perms);
         }
     }
+
 
     /**
      * Creates the login buttons for General User and Truck Drivers
@@ -91,17 +93,20 @@ public class UserType extends AppCompatActivity {
         });
     }
 
+
     /** Creates an intent to move to DriverActivity and starts the activity */
     private void driverLogin(){
         Intent intent = new Intent(this, DriverActivity.class);
         startActivity(intent);
     }
 
+
     /** Creates an intent to move to UserActivity and starts the activity */
     private void userLogin(){
         Intent intent = new Intent(this, UserActivity.class);
         startActivity(intent);
     }
+
 
     /** Enables user to switch between Driver and User signins */
     private void setupUserTypeSwitcher(){
@@ -155,6 +160,7 @@ public class UserType extends AppCompatActivity {
         userLoginBtn.startAnimation(clockwise);
 
     }
+
 
     /**
      *  On user selection of the User panel, this method will create the user view.
