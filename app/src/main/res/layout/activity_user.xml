@@ -54,7 +54,7 @@
             android:id="@+id/dragInfo"
             android:orientation="horizontal">
 
-            <com.example.android.hackathon.RoundedImageView
+            <com.example.android.hackathon.Utilities.RoundedImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="left"

@@ -1,4 +1,4 @@
-package com.example.android.hackathon; /**
+package com.example.android.hackathon.Utilities; /**
  * Created by Tommy on 6/24/17.
  */
 
@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by jaskarnjagpal on 3/3/17.
@@ -42,7 +43,7 @@ public class GPSTracker extends Service implements LocationListener {
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
 
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60; // 1 minute
 
     // Declaring a Location Manager
     protected LocationManager locationManager;
@@ -69,6 +70,7 @@ public class GPSTracker extends Service implements LocationListener {
 
             if (!isGPSEnabled && !isNetworkEnabled) {
                 // no network provider is enabled
+                Toast.makeText(getApplicationContext(), "GPS not enabled", Toast.LENGTH_SHORT).show();
             } else {
                 this.canGetLocation = true;
                 // First get location from Network Provider
