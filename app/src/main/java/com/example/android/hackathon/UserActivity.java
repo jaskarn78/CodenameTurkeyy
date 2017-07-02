@@ -161,21 +161,23 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             ArrayList<JSONObject> pulledList = new QueryJSONArray().execute(allTrucksQuery).get();
             truckList = new ArrayList<>();
 
-            for (int i=0; i<pulledList.size(); i++) {
-                JSONObject json_data = pulledList.get(i);
-                Truck temp = new Truck();
-                temp.setName(json_data.getString("truck_name"));
-                temp.setType(json_data.getString("truck_type"));
-                temp.setMenu(json_data.getString("truck_menu"));
-                temp.setStatus(json_data.getInt("truck_status"));
-                temp.setTruckImage(json_data.getString("truck_image"));
-                temp.setLat(json_data.getDouble("truck_lat"));
-                temp.setLong(json_data.getDouble("truck_lng"));
-                temp.setIcon(temp.getType());
-                truckList.add(i, temp);
+            // Only execute if the query returned results
+            if (pulledList != null) {
+                for (int i = 0; i < pulledList.size(); i++) {
+                    JSONObject json_data = pulledList.get(i);
+                    Truck temp = new Truck();
+                    temp.setName(json_data.getString("truck_name"));
+                    temp.setType(json_data.getString("truck_type"));
+                    temp.setMenu(json_data.getString("truck_menu"));
+                    temp.setStatus(json_data.getInt("truck_status"));
+                    temp.setTruckImage(json_data.getString("truck_image"));
+                    temp.setLat(json_data.getDouble("truck_lat"));
+                    temp.setLong(json_data.getDouble("truck_lng"));
+                    temp.setIcon(temp.getType());
+                    truckList.add(i, temp);
+                }
             }
-
-
+            
             // Create adapter for the truck list
             TruckAdapter adapter = new TruckAdapter(this, truckList);
             listView.setAdapter(adapter);

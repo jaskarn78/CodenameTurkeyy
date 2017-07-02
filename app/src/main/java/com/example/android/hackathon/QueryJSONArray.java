@@ -73,17 +73,19 @@ public class QueryJSONArray extends AsyncTask<String, Void, ArrayList<JSONObject
             isr.close();
             reader.close();
 
-            // Prepare to store response information as JSONObjects
-            JSONArray jArray;
-            jArray = new JSONArray(sb.toString());
-            jsonList = new ArrayList<>();
+            // Make sure there was a return value before sending information back
+            if (!sb.toString().equals("")) {
+                // Prepare to store response information as JSONObjects
+                JSONArray jArray;
+                jArray = new JSONArray(sb.toString());
+                jsonList = new ArrayList<>();
 
-            // Itterate through the JSONArray response and store JSONObjects in ArrayList
-            for (int i = 0; i < jArray.length(); i++) {
-                jsonList.add(jArray.getJSONObject(i));
-                Log.v("PrintLine", jsonList.get(i).toString());
+                // Itterate through the JSONArray response and store JSONObjects in ArrayList
+                for (int i = 0; i < jArray.length(); i++) {
+                    jsonList.add(jArray.getJSONObject(i));
+                    Log.v("PrintLine", jsonList.get(i).toString());
+                }
             }
-
             // Return ArrayList of JSONObjects returned from query
             return jsonList;
         } catch (MalformedURLException e) {
