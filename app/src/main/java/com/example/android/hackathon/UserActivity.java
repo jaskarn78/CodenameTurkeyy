@@ -29,7 +29,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -168,7 +167,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 temp.setType(json_data.getString("truck_type"));
                 temp.setMenu(json_data.getString("truck_menu"));
                 temp.setStatus(json_data.getBoolean("truck_status"));
-                temp.setImage(json_data.getString("truck_image"));
+                temp.setTruckImage(json_data.getString("truck_image"));
                 temp.setLat(json_data.getDouble("truck_lat"));
                 temp.setLong(json_data.getDouble("truck_lng"));
                 temp.setIcon(temp.getType());
@@ -258,7 +257,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 int position = Integer.parseInt(marker.getId().replace("m", ""));
                 clickedPosition=position;
                 truckName.setText(marker.getTitle());
-                Glide.with(UserActivity.this).load(truckList.get(position).getImage()).into(truckImage);
+                Glide.with(UserActivity.this).load(truckList.get(position).getTruckImage()).into(truckImage);
                 truckButton.setVisibility(View.VISIBLE);
 
                 return false;
