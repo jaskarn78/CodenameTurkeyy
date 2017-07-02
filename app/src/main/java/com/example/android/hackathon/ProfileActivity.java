@@ -18,7 +18,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
+import static com.example.android.hackathon.R.id.status;
 
 // TODO Comment this .java file
 
@@ -56,10 +56,10 @@ public class ProfileActivity extends AppCompatActivity {
         int position = getIntent().getIntExtra("position", 0);
 
         // Create lists for truck images, names, menus, types...
-        ArrayList<String> truckImages = getIntent().getStringArrayListExtra("truckImages");
-        ArrayList<String> truckNames = getIntent().getStringArrayListExtra("truckNames");
-        ArrayList<String> menuImages = getIntent().getStringArrayListExtra("menuImages");
-        ArrayList<String> types = getIntent().getStringArrayListExtra("types");
+        String truckImage = getIntent().getStringExtra("truckImage");
+        String truckName = getIntent().getStringExtra("truckName");
+        String menuImage = getIntent().getStringExtra("menuImage");
+        String type = getIntent().getStringExtra("type");
 
         // Gather selected truck's latitude and longitude
         lat = getIntent().getDoubleExtra("lat", 0);
@@ -67,33 +67,33 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Set truck image view to correct truck photo
         ImageView truckimg = (ImageView)findViewById(R.id.display_truck_image);
-        Glide.with(this).load(truckImages.get(position)).into(truckimg);
+        Glide.with(this).load(truckImage).into(truckimg);
 
         // Set truck name to correct food truck name
-        TextView truckName = (TextView)findViewById(R.id.truck_owner);
-        truckName.setText(truckNames.get(position));
+        TextView truckNameTxt = (TextView)findViewById(R.id.truck_owner);
+        truckNameTxt.setText(truckName);
 
         // Set truck menu image to correct food truck menu
-        final ImageView menuImage = (ImageView)findViewById(R.id.menuImage);
-        Glide.with(this).load(menuImages.get(position)).into(menuImage);
+        final ImageView menuImageView = (ImageView)findViewById(R.id.menuImage);
+        Glide.with(this).load(menuImage).into(menuImageView);
 
         // Get food truck's current status
-        TextView status = (TextView)findViewById(R.id.status);
-        status.setText("Status: Available");
+        TextView statusTxt = (TextView)findViewById(status);
+        statusTxt.setText("Status: Available");
 
         // Get food truck's food type
-        TextView type = (TextView)findViewById(R.id.type);
-        type.setText("Food Type: "+types.get(position));
+        TextView typeTxt = (TextView)findViewById(R.id.type);
+        typeTxt.setText("Food Type: "+type);
 
         // Create the relative layout for which the food truck information will be displayed
         RelativeLayout relLayout = (RelativeLayout)findViewById(R.id.image_layout);
         relLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(menuImage.getVisibility()!=View.VISIBLE)
-                    menuImage.setVisibility(View.VISIBLE);
+                if(menuImageView.getVisibility()!=View.VISIBLE)
+                    menuImageView.setVisibility(View.VISIBLE);
                 else
-                    menuImage.setVisibility(View.GONE);
+                    menuImageView.setVisibility(View.GONE);
             }});
     }
 

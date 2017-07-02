@@ -44,6 +44,7 @@ import java.util.List;
  *  Activity for the Driver. Provides the option to set truck name, food type, active time,
  * truck photo, and truck menu.
  */
+// TODO Redo everything...
 public class DriverActivity extends AppCompatActivity {
     private static final int GET_TRUCK_FROM_GALLERY = 1;
     private static final int REQUEST_TRUCK_IMAGE_CAPTURE = 2;
@@ -136,12 +137,13 @@ public class DriverActivity extends AppCompatActivity {
         });
     }
 
+    // TODO Create an 'X' on the captured image. Giving the driver the option to not save it
     /** Create camera buttons and add onClickListeners */
     private void setupCameraButtons() {
         ImageButton uploadTruckPhotoBtn, captureTruckPhotoBtn,
                     uploadMenuPhotoBtn, captureMenuPhotoBtn;
 
-        // If the user has a camera feature, enable the CAPTURE buttons
+        /* If the user has a camera feature, enable the CAPTURE buttons */
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             // Create button to CAPTURE TRUCK image from camera
             captureTruckPhotoBtn = (ImageButton) findViewById(R.id.camera_truck_button);
@@ -171,7 +173,7 @@ public class DriverActivity extends AppCompatActivity {
                 }
             });
 
-            // Create button to CAPTURE MENU photo from camera
+            /* Create button to CAPTURE MENU photo from camera */
             captureMenuPhotoBtn = (ImageButton) findViewById(R.id.camera_menu_button);
             captureMenuPhotoBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -203,7 +205,7 @@ public class DriverActivity extends AppCompatActivity {
 
         }
 
-        // Create button to UPLOAD TRUCK photo from phone gallery
+        /* Create button to UPLOAD TRUCK photo from phone gallery */
         uploadTruckPhotoBtn = (ImageButton) findViewById(R.id.upload_truck_button);
         uploadTruckPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,7 +214,7 @@ public class DriverActivity extends AppCompatActivity {
             }
         });
 
-        // Create button to UPLOAD MENU photo from gallery
+        /* Create button to UPLOAD MENU photo from gallery */
         uploadMenuPhotoBtn = (ImageButton) findViewById(R.id.upload_menu_button);
         uploadMenuPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -298,6 +300,7 @@ public class DriverActivity extends AppCompatActivity {
 
     }
 
+    /** Sets the image stored at 'imagepath' to the upright position */
     private static void setImageUpright(String imagepath) throws IOException{
         FileOutputStream fos = null;
         try {
@@ -338,7 +341,18 @@ public class DriverActivity extends AppCompatActivity {
         }
     }
 
-    /* Creates an image file for the picture that was taken */
+    /** Rotates the parameter bitmap by "angle" degrees and returns the new bitmap */
+    private static Bitmap rotateBitmap(Bitmap bitmap, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,bitmap.getWidth(),bitmap.getHeight(),true);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0,
+                scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+
+        return rotatedBitmap;
+    }
+
+    /** Creates an image file for the picture that was taken */
     private File createImageFile(int captureId) throws IOException {
         String prefix;
 
@@ -363,18 +377,7 @@ public class DriverActivity extends AppCompatActivity {
         return image;
     }
 
-    private static Bitmap rotateBitmap(Bitmap bitmap, float angle) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,bitmap.getWidth(),bitmap.getHeight(),true);
-        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0,
-                scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-
-        return rotatedBitmap;
-    }
-
-    /* Adds currently taken picture to the photo gallery */
-   /* Adds currently taken picture to the photo gallery */
+   /** Adds currently taken picture to the photo gallery */
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(mCurrentPhotoPath);

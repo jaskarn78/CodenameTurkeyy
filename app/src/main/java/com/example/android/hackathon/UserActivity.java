@@ -47,16 +47,6 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<Truck> truckList;
     private MarkerOptions markerOptions = new MarkerOptions();
 
-    // TODO Create a better method for doing this
-    private ArrayList<LatLng> latlngs = new ArrayList<>();
-    private ArrayList<String> titles = new ArrayList<>();
-    private ArrayList<Boolean> status = new ArrayList<>();
-    private ArrayList<String> imgs = new ArrayList<>();
-    private ArrayList<String> menus = new ArrayList<>();
-    private ArrayList<String> types = new ArrayList<>();
-    private ArrayList<Double> lats = new ArrayList<>();
-    private ArrayList<Double> lngs = new ArrayList<>();
-
     private ImageButton truckButton;
     private TextView truckName;
     private ImageView truckImage;
@@ -65,61 +55,59 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     private int clickedPosition=0;
     private ListView listView;
 
-    /**
-     * Class to store the Truck information.
-     */
+    /** Class to store the Truck information. */
     private class Truck {
-        private String _name;
-        private String _type;
-        private boolean _status;
-        private String _menu;
-        private String _image;
-        private double _lat;
-        private double _long;
-        private int _icon;
+        private String name;
+        private String type;
+        private boolean status;
+        private String menu;
+        private String truckImage;
+        private double lat;
+        private double lng;
+        private int icon;
 
 
-        public void setName(String name) { _name = name; }
-        public void setType(String type) { _type = type; }
-        public void setStatus(boolean val) { _status = val; }
-        public void setMenu(String val) { _menu = val; }
-        public void setImage(String val) { _image = val; }
-        public void setLat(double val) { _lat = val; }
-        public void setLong(double val) { _long = val; }
+        public void setName(String val) { name = val; }
+        public void setType(String val) { type = val; }
+        public void setStatus(boolean val) { status = val; }
+        public void setMenu(String val) { menu = val; }
+        public void setTruckImage(String val) { truckImage = val; }
+        public void setLat(double val) { lat = val; }
+        public void setLong(double val) { lng = val; }
         public void setIcon(String val) {
             try {
                 switch (val) {
                     case "Mexican":
-                        _icon = R.drawable.taco_truck_marker;
+                        icon = R.drawable.taco_truck_marker;
                         break;
                     case "American":
-                        _icon = R.drawable.burger_truck_marker;
+                        icon = R.drawable.burger_truck_marker;
                         break;
                     case "Desserts":
-                        _icon = R.drawable.twinkie_truck_marker;
+                        icon = R.drawable.twinkie_truck_marker;
                         break;
                     case "Seafood":
-                        _icon = R.drawable.twinkie_truck_marker;
+                        icon = R.drawable.twinkie_truck_marker;
                         break;
                     case "Pizza":
-                        _icon = R.drawable.pizza_truck_marker;
+                        icon = R.drawable.pizza_truck_marker;
                         break;
                     default:
-                        _icon = R.drawable.spec_truck_marker;
+                        icon = R.drawable.spec_truck_marker;
                 }
             } catch (Resources.NotFoundException ex) {
                 ex.getMessage();
             }
         }
 
-        public String getName() {return _name; }
-        public String getType() {return _type; }
-        public boolean getStatus() {return _status; }
-        public String getMenu() {return _menu; }
-        public String getImage() {return _image; }
-        public double getLat() {return _lat; }
-        public double getLong() {return _long; }
-        public int getIcon() { return _icon; }
+        public String getName() {return name; }
+        public String getType() {return type; }
+        public boolean getStatus() {return status; }
+        public String getMenu() {return menu; }
+        public String getTruckImage() {return truckImage; }
+        public double getLat() {return lat; }
+        public double getLong() {return lng; }
+        public int getIcon() { return icon; }
 
     }
 
@@ -174,20 +162,12 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 temp.setType(json_data.getString("Type"));
                 temp.setMenu(json_data.getString("Menu"));
                 temp.setStatus(false);
-                temp.setImage(json_data.getString("Image"));
+                temp.setTruckImage(json_data.getString("Image"));
                 temp.setLat(json_data.getDouble("Lat"));
                 temp.setLong(json_data.getDouble("Lon"));
                 temp.setIcon(temp.getType());
 
                 truckList.add(i, temp);
-                latlngs.add(new LatLng(temp.getLat(), temp.getLong()));
-                imgs.add(temp.getImage());
-                status.add(temp.getStatus());
-                lats.add(temp.getLat());
-                lngs.add(temp.getLong());
-                titles.add(temp.getName());
-                menus.add(temp.getMenu());
-                types.add(temp.getType());
             }
 
 
@@ -199,15 +179,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             truckButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(UserActivity.this, ProfileActivity.class);
-                    intent.putStringArrayListExtra("truckNames", titles);
-                    intent.putStringArrayListExtra("truckImages", imgs);
-                    intent.putStringArrayListExtra("menuImages", menus);
-                    intent.putStringArrayListExtra("types", types);
-                    intent.putExtra("position", clickedPosition);
-                    intent.putExtra("lat", lats.get(clickedPosition));
-                    intent.putExtra("lng", lngs.get(clickedPosition));
-                    startActivity(intent);
+                    profileActivity();
                 }
             });
 
@@ -269,10 +241,10 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .bearing(314)
                 .build();
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        for(int i=0; i<latlngs.size(); i++){
-            markerOptions.position(latlngs.get(i));
-            markerOptions.title(titles.get(i));
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(truckList.get(i)._icon));
+        for(int i=0; i<truckList.size(); i++){
+            markerOptions.position(new LatLng(truckList.get(i).getLat(), truckList.get(i).getLong()));
+            markerOptions.title(truckList.get(i).getName());
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(truckList.get(i).getIcon()));
             googleMap.addMarker(markerOptions);
         }
 
@@ -283,7 +255,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 clickedPosition=position;
                 truckName.setText(marker.getTitle());
                 Glide.with(UserActivity.this)
-                      .load(truckList.get(position).getImage()).into(truckImage);
+                      .load(truckList.get(position).getTruckImage()).into(truckImage);
                 truckButton.setVisibility(View.VISIBLE);
 
                 return false;
@@ -322,22 +294,14 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Populate the data into the template view using the data object
             tvName.setText(truck.getName());
             tvHome.setText(truck.getType());
-            Glide.with(getApplicationContext()).load(truck.getImage()).into(tvImage);
+            Glide.with(getApplicationContext()).load(truck.getTruckImage()).into(tvImage);
 
             //  Create an OnClickListener for the selected truck and push food truck information
             // to intent, which will be used to display the food truck page.
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(UserActivity.this, ProfileActivity.class);
-                    intent.putStringArrayListExtra("truckNames", titles);
-                    intent.putStringArrayListExtra("truckImages", imgs);
-                    intent.putStringArrayListExtra("menuImages", menus);
-                    intent.putStringArrayListExtra("types", types);
-                    intent.putExtra("position", position);
-                    intent.putExtra("lat", lats.get(clickedPosition));
-                    intent.putExtra("lng", lngs.get(clickedPosition));
-                    startActivity(intent);
+                profileActivity();
                 }
             });
 
@@ -346,5 +310,16 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void profileActivity() {
+        Intent intent = new Intent(UserActivity.this, ProfileActivity.class);
+        intent.putExtra("truckName", truckList.get(clickedPosition).getName());
+        intent.putExtra("truckImage", truckList.get(clickedPosition).getTruckImage());
+        intent.putExtra("menuImage", truckList.get(clickedPosition).getMenu());
+        intent.putExtra("type", truckList.get(clickedPosition).getType());
+        intent.putExtra("position", clickedPosition);
+        intent.putExtra("lat", truckList.get(clickedPosition).getLat());
+        intent.putExtra("lng", truckList.get(clickedPosition).getLong());
+        startActivity(intent);
+    }
 
 }
