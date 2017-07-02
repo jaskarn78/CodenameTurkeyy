@@ -295,7 +295,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
-     *  Adapter for the truck list.
+     * Adapter for the truck list.
      */
     class TruckAdapter extends ArrayAdapter<Truck> {
         public TruckAdapter(Context context, ArrayList<Truck> trucks) {
