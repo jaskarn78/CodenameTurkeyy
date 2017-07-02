@@ -59,7 +59,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     private class Truck {
         private String name;
         private String type;
-        private boolean status;
+        private int status;
         private String menu;
         private String truckImage;
         private double lat;
@@ -69,7 +69,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         public void setName(String val) { name = val; }
         public void setType(String val) { type = val; }
-        public void setStatus(boolean val) { status = val; }
+        public void setStatus(int val) { status = val; }
         public void setMenu(String val) { menu = val; }
         public void setTruckImage(String val) { truckImage = val; }
         public void setLat(double val) { lat = val; }
@@ -102,7 +102,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         public String getName() {return name; }
         public String getType() {return type; }
-        public boolean getStatus() {return status; }
+        public int getStatus() {return status; }
         public String getMenu() {return menu; }
         public String getTruckImage() {return truckImage; }
         public double getLat() {return lat; }
@@ -166,7 +166,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 temp.setName(json_data.getString("truck_name"));
                 temp.setType(json_data.getString("truck_type"));
                 temp.setMenu(json_data.getString("truck_menu"));
-                temp.setStatus(json_data.getBoolean("truck_status"));
+                temp.setStatus(json_data.getInt("truck_status"));
                 temp.setTruckImage(json_data.getString("truck_image"));
                 temp.setLat(json_data.getDouble("truck_lat"));
                 temp.setLong(json_data.getDouble("truck_lng"));
