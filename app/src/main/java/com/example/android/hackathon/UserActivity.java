@@ -178,7 +178,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 temp.setName(json_data.getString("truck_name"));
                 temp.setType(json_data.getString("truck_type"));
                 temp.setMenu(json_data.getString("truck_menu"));
-                temp.setStatus(false);
+                temp.setStatus(json_data.getBoolean("truck_status"));
                 temp.setImage(json_data.getString("truck_image"));
                 temp.setLat(json_data.getDouble("truck_lat"));
                 temp.setLong(json_data.getDouble("truck_lng"));
