@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  *   Activity for the General User Functionality. This activity will display a map of the user's
@@ -148,23 +149,28 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         truckName = (TextView)findViewById(R.id.truckname);
     }
 
+
+    private void parseTruckObjects(){
+
+    }
+
     /** Creates the truck array list from the hardcoded string */
     // TODO check the way this works (cleaner and
     private void setupTruckArrayList() {
         try {
             JSONObject jobj = new JSONObject(jsonString);
-            JSONArray jarr  = jobj.getJSONArray("Sheet1");
+            ArrayList<JSONObject> pulledList = new QueryTruckList().execute().get();
             truckList = new ArrayList<Truck>();
-            for (int i=0; i<jarr.length(); i++) {
-                JSONObject json_data = jarr.getJSONObject(i);
+            for (int i=0; i<pulledList.size(); i++) {
+                JSONObject json_data = pulledList.get(i);
                 Truck temp = new Truck();
-                temp.setName(json_data.getString("Name"));
-                temp.setType(json_data.getString("Type"));
-                temp.setMenu(json_data.getString("Menu"));
-                temp.setStatus(false);
-                temp.setTruckImage(json_data.getString("Image"));
-                temp.setLat(json_data.getDouble("Lat"));
-                temp.setLong(json_data.getDouble("Lon"));
+                temp.setName(json_data.getString("truck_name"));
+                temp.setType(json_data.getString("truck_type"));
+                temp.setMenu(json_data.getString("truck_menu"));
+                temp.setStatus(json_data.getBoolean("truck_status"));
+                temp.setImage(json_data.getString("truck_image"));
+                temp.setLat(json_data.getDouble("truck_lat"));
+                temp.setLong(json_data.getDouble("truck_lng"));
                 temp.setIcon(temp.getType());
 
                 truckList.add(i, temp);
@@ -183,7 +189,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
 
-        } catch (JSONException e) {
+        } catch (JSONException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
@@ -235,11 +241,9 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.getUiSettings().setCompassEnabled(false);
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(38.579431, -121.479059))
-                .zoom(18)
-                .tilt(67.5f)
-                .bearing(314)
-                .build();
+                .target(new LatLng(38.579431, -121.479059)).zoom(18)
+                .tilt(67.5f).bearing(314).build();
+
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         for(int i=0; i<truckList.size(); i++){
             markerOptions.position(new LatLng(truckList.get(i).getLat(), truckList.get(i).getLong()));
@@ -254,8 +258,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                 int position = Integer.parseInt(marker.getId().replace("m", ""));
                 clickedPosition=position;
                 truckName.setText(marker.getTitle());
-                Glide.with(UserActivity.this)
-                      .load(truckList.get(position).getTruckImage()).into(truckImage);
+                Glide.with(UserActivity.this).load(truckList.get(position).getImage()).into(truckImage);
                 truckButton.setVisibility(View.VISIBLE);
 
                 return false;
@@ -265,7 +268,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
-     *  Adapter for the truck list.
+     * Adapter for the truck list.
      */
     class TruckAdapter extends ArrayAdapter<Truck> {
         public TruckAdapter(Context context, ArrayList<Truck> trucks) {
