@@ -23,14 +23,12 @@ import java.util.ArrayList;
 // TODO 1: Comment this block of code
     // TODO 2: Replace hardcoded URL
 public class QueryTruckList extends AsyncTask<Void, Void, ArrayList<JSONObject>> {
-    private static final String URL = "https://script.google.com/macros/s/AKfycbygukdW3tt8sCPcFDlkMnMuNu9bH5fpt7bKV50p2bM/exec?id=1jHw3XQ1OIqCVefW9uiL2jtkZQAq8EXIkkljo1bSYThk&sheet=Sheet1";
+    private static final String URL ="http://jagpal-development.com/food_truck/php/pull_all_trucks.php";
+
     private JSONObject truckJSON;
     private ArrayList<JSONObject> truckList;
     private ArrayList<JSONObject> data;
 
-    public QueryTruckList(ArrayList<JSONObject> data) {
-        this.data = data;
-    }
 
     @Override
     protected ArrayList<JSONObject> doInBackground(Void... params) {
@@ -38,11 +36,7 @@ public class QueryTruckList extends AsyncTask<Void, Void, ArrayList<JSONObject>>
         OutputStreamWriter wr = null;
         BufferedReader reader = null;
         try {
-            String data;
-            if (truckJSON != null)
-                data = truckJSON.toString();  // data is the JSONObject being sent to the php server
-            else
-                return null;
+
 
             // Connect to the URL
             java.net.URL url = new URL(URL);
@@ -50,10 +44,6 @@ public class QueryTruckList extends AsyncTask<Void, Void, ArrayList<JSONObject>>
 
             conn.setDoOutput(true);
             wr = new OutputStreamWriter(conn.getOutputStream());
-
-            // POST the information to the URL
-            wr.write(data);
-            wr.flush();
 
             // Create a means to read the output from the PHP
             reader = new BufferedReader(new
@@ -97,17 +87,8 @@ public class QueryTruckList extends AsyncTask<Void, Void, ArrayList<JSONObject>>
     @Override
     protected void onPostExecute(ArrayList<JSONObject> objs) {
         if (objs != null) {
-            setEventList(objs);
             data=objs;
         }
-
     }
 
-    public ArrayList<JSONObject> getList(){
-        return data;
-    }
-
-    public void setEventList(ArrayList<JSONObject> list){
-        truckList = list;
-    }
 }
