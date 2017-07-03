@@ -1,4 +1,4 @@
-package com.example.android.hackathon;
+package com.example.android.hackathon.Utilities;
 
 import android.os.AsyncTask;
 import android.util.Log;

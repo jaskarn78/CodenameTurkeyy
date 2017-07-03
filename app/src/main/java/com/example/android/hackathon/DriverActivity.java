@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.example.android.hackathon.Utilities.GPSTracker;
+import com.example.android.hackathon.Utilities.UploadFileAsync;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  *  Activity for the Driver. Provides the option to set truck name, food type, active time,
@@ -263,8 +265,17 @@ public class DriverActivity extends AppCompatActivity {
         else if (requestCode == REQUEST_TRUCK_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             try {
                 setImageUpright(mCurrentPhotoPath);
+                // set menuImage to upright bitmap
+                menuImage.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
+                // TODO Make this not test code...
+                new UploadFileAsync().execute(mCurrentPhotoPath, "0_TestTruck", "Truck_1").get();
+
             } catch (IOException ex) {
                 Log.e("IMG_SAVE", "Error trying to save image");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
 
             galleryAddPic();
@@ -295,8 +306,15 @@ public class DriverActivity extends AppCompatActivity {
                 setImageUpright(mCurrentPhotoPath);
                 // set menuImage to upright bitmap
                 menuImage.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
+                // TODO Make this not test code...
+                new UploadFileAsync().execute(mCurrentPhotoPath, "0_TestTruck", "Menu_1").get();
+
             } catch (IOException ex) {
                 Log.e("IMG_SAVE", "Error trying to save image");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
 
             galleryAddPic();

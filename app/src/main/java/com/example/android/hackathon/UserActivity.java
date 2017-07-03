@@ -2,7 +2,6 @@ package com.example.android.hackathon;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.android.hackathon.Utilities.GPSTracker;
+import com.example.android.hackathon.Utilities.QueryJSONArray;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -55,61 +55,6 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     private int clickedPosition=0;
     private ListView listView;
 
-    /** Class to store the Truck information. */
-    private class Truck {
-        private String name;
-        private String type;
-        private int status;
-        private String menu;
-        private String truckImage;
-        private double lat;
-        private double lng;
-        private int icon;
-
-
-        public void setName(String val) { name = val; }
-        public void setType(String val) { type = val; }
-        public void setStatus(int val) { status = val; }
-        public void setMenu(String val) { menu = val; }
-        public void setTruckImage(String val) { truckImage = val; }
-        public void setLat(double val) { lat = val; }
-        public void setLong(double val) { lng = val; }
-        public void setIcon(String val) {
-            try {
-                switch (val) {
-                    case "Mexican":
-                        icon = R.drawable.taco_truck_marker;
-                        break;
-                    case "American":
-                        icon = R.drawable.burger_truck_marker;
-                        break;
-                    case "Desserts":
-                        icon = R.drawable.twinkie_truck_marker;
-                        break;
-                    case "Seafood":
-                        icon = R.drawable.twinkie_truck_marker;
-                        break;
-                    case "Pizza":
-                        icon = R.drawable.pizza_truck_marker;
-                        break;
-                    default:
-                        icon = R.drawable.spec_truck_marker;
-                }
-            } catch (Resources.NotFoundException ex) {
-                ex.getMessage();
-            }
-        }
-
-        public String getName() {return name; }
-        public String getType() {return type; }
-        public int getStatus() {return status; }
-        public String getMenu() {return menu; }
-        public String getTruckImage() {return truckImage; }
-        public double getLat() {return lat; }
-        public double getLong() {return lng; }
-        public int getIcon() { return icon; }
-
-    }
     /**
      *  Creates the UserActivity.
      * @param savedInstanceState
