@@ -1,37 +1,14 @@
 <resources>
     <string name="app_name">Truck\'n Up</string>
-    <string name="title_activity_driver">DriverActivity</string>
-    <string name="upload_menu">Upload Menu</string>
     <string name="google_maps_key">AIzaSyCBE7YserUYbz3jhH9C8pDKYW1-9yi98Xc</string>
     <string name="food_truck_login">Food Truck Login</string>
     <string name="login_as_user">Login as User</string>
     <string name="select_a_food_truck">Select a food truck!</string>
 
     <string name="get_all_trucks_query">select * from food_truck</string>
+    <string name="step_1_truck_name">Step 1: Truck Name</string>
+    <string name="step_2_set_location">Step 2: Location</string>
+    <string name="step_3_set_type">Step 3: Type</string>
+    <string name="step_4_upload_images">Step 4: Upload Images</string>
 
-    <string-array name="food_spinner">
-        <item>Food Type</item>
-        <item>Mexican</item>
-        <item>BBQ</item>
-        <item> Vegiterian</item>
-        <item>Desserts</item>
-        <item>Hot Dog Stand</item>
-        <item>Seafood</item>
-        <item>American</item>
-    </string-array>
-
-    <string-array name="time_spinner">
-        <item>12:00</item>
-        <item>01:00</item>
-        <item>02:00</item>
-        <item>03:00</item>
-        <item>04:00</item>
-        <item>05:00</item>
-        <item>06:00</item>
-        <item>07:00</item>
-        <item>08:00</item>
-        <item>09:00</item>
-        <item>10:00</item>
-        <item>11:00</item>
-    </string-array>
 </resources>

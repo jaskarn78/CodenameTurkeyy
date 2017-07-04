@@ -1,24 +1,34 @@
 package com.example.android.hackathon;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.location.Address;
+import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageButton;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.hackathon.Utilities.GPSTracker;
 import com.google.android.gms.maps.CameraUpdate;
@@ -29,24 +39,22 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.jaredrummler.materialspinner.MaterialSpinner;
-
+import com.hlab.fabrevealmenu.view.FABRevealMenu;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *  Activity for the Driver. Provides the option to set truck name, food type, active time,
  * truck photo, and truck menu.
  */
 // TODO Redo everything...
-public class DriverActivity extends AppCompatActivity {
+public class DriverActivity extends Activity {
     private static final int GET_TRUCK_FROM_GALLERY = 1;
     private static final int REQUEST_TRUCK_IMAGE_CAPTURE = 2;
     private static final int GET_MENU_FROM_GALLERY = 3;
@@ -55,8 +63,31 @@ public class DriverActivity extends AppCompatActivity {
     private MapView driver_map;
     private GoogleMap googleMap;
     private GPSTracker gpsTracker;
+    private View viewRoot;
     private ImageView menuImage;
     private String mCurrentPhotoPath;
+    private TextView stepOneTV, stepTwoTV, stepThreeTV, stepFourTV;
+
+    private FloatingActionButton fabName, fabLocation, fabType, fabImage;
+
+    private String truckName;
+    private double driverLat, driverLng;
+    private View fabMenuView;
+    private FABRevealMenu fabMenu1, fabMenu2, fabMenu3, fabMenu4;
+    private String manualLocationInput;
+    private TextView currentLocationTV;
+    private ViewPager typePager;
+    int[] truckDrawables = {
+            R.drawable.burger_truck_marker,
+            R.drawable.pizza_truck_marker,
+            R.drawable.spec_truck_marker,
+            R.drawable.taco_truck_marker,
+            R.drawable.twinkie_truck_marker
+    };
+    String[] truckTextViews = {
+            "American", "Pizza", "Speciality", "Mexican", "Desserts"
+    };
+
 
 
     /**
@@ -71,59 +102,228 @@ public class DriverActivity extends AppCompatActivity {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_driver);
-
+        setContentView(R.layout.truck_info_reveal);
+        GPSTracker gpsTracker = new GPSTracker(this);
+        driverLat = gpsTracker.getLatitude();
+        driverLng = gpsTracker.getLongitude();
         // Initialize the Driver's position
         MapsInitializer.initialize(this);
-        gpsTracker = new GPSTracker(this);
+        fabMenu1 = (FABRevealMenu)findViewById(R.id.reveal);
+        fabMenu2 = (FABRevealMenu)findViewById(R.id.reveal2);
+        fabMenu3 = (FABRevealMenu)findViewById(R.id.reveal3);
+        fabMenu4 = (FABRevealMenu)findViewById(R.id.reveal4);
 
-        menuImage = (ImageView) findViewById(R.id.upload_image_view);
-
-        // Create Spinners
-        setupSpinners();
+        setupFabs();
+        setupStepTextViews();
+        setupFabName();
+        setupLocationFAB();
 
         // Get Driver's current position and set up Map
-        driver_map = (MapView) findViewById(R.id.mapView2);
+        driver_map = (MapView)fabMenuView.findViewById(R.id.mapView2);
         driver_map.onCreate(savedInstanceState);
         driver_map.onResume();
+
         setupMap();
+        setupTypeFAB();
+        setupCameraFab();
+
 
         // Create Camera buttons
-        setupCameraButtons();
+        //setupCameraButtons();
+    }
+
+    private void setupFabs(){
+        //Floating action buttons used for each step of the food truck registration
+        fabName = (FloatingActionButton)findViewById(R.id.truck_name_fab);
+        fabLocation = (FloatingActionButton)findViewById(R.id.truck_fab_location);
+        fabType = (FloatingActionButton)findViewById(R.id.truck_fab_type);
+        fabImage = (FloatingActionButton)findViewById(R.id.truck_fab_image);
+    }
+
+    private void setupStepTextViews(){
+        //Textviews to display driver input
+        stepOneTV = (TextView)findViewById(R.id.step_one_name);
+        stepTwoTV = (TextView)findViewById(R.id.step_two_location);
+        stepThreeTV = (TextView)findViewById(R.id.step_three_type);
+        stepFourTV = (TextView)findViewById(R.id.step_four_image);
+
+    }
+
+    //Assigning floating action button to reveal frame
+    private void setupFabName(){
+        if(fabName!=null && fabMenu1!=null) {
+            View customView = View.inflate(this, R.layout.custom_name_layout, null);
+            fabMenuView = customView;
+            fabMenu1.setCustomView(customView);
+            fabMenu1.bindAncherView(fabName);
+            TextView okTextView = (TextView)fabMenuView.findViewById(R.id.okName_tv);
+            TextView cancelTextView = (TextView)fabMenuView.findViewById(R.id.cancelName_tv);
+            final EditText nameEditText = (EditText)fabMenuView.findViewById(R.id.enter_name);
+            okTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(nameEditText.getText().toString().length()>1) {
+                        fabMenu1.closeMenu();
+                        truckName = nameEditText.getText().toString();
+                        stepOneTV.setText(truckName);
+                        fabName.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.step_complete)));
+                        fabName.setImageResource(R.drawable.ic_check_white_24dp);
+                    }
+                    else
+                        Toast.makeText(getApplicationContext(), "Enter valid name", Toast.LENGTH_SHORT).show();
+                } });
+
+            cancelTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fabMenu1.closeMenu(); } });
+
+        }
     }
 
 
-    /** Creates the dropdown selection for Food Type and Truck Active Time*/
-    private void setupSpinners() {
-        MaterialSpinner food_spinner, startSpinner, endSpinner;
+    private void setupLocationFAB(){
+        if(fabLocation!=null && fabMenu2!=null) {
+            View customView = View.inflate(this, R.layout.custom_location_layout, null);
+            fabMenuView = customView;
+            fabMenu2.setCustomView(customView);
+            fabMenu2.bindAncherView(fabLocation);
+            TextView okTextView = (TextView)findViewById(R.id.ok_tv);
+            TextView cancelTextView = (TextView)findViewById(R.id.cancel_tv);
+            currentLocationTV = (TextView) findViewById(R.id.current_location);
+            currentLocationTV.setText(getAddressFromLatLng());
+            okTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    stepTwoTV.setText(currentLocationTV.getText());
+                    fabLocation.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.step_complete)));
+                    fabLocation.setImageResource(R.drawable.ic_check_white_24dp);
+                    fabMenu2.closeMenu();
+                } });
 
-        // Create the spinned
-        food_spinner = (MaterialSpinner) findViewById(R.id.food_spinner);
+            cancelTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fabMenu2.closeMenu(); } });
+        }
 
-        // Set Food Spinner colors
-        food_spinner.setTextColor(getColor(R.color.black));
-        food_spinner.setBackgroundColor(getColor(R.color.cardview_light_background));
-
-        // Get String-Array of all food type options and set Food Type spinner values
-        String[] arr = getResources().getStringArray(R.array.food_spinner);
-        List<String> spinList = new ArrayList<String>(Arrays.asList(arr));
-        food_spinner.setItems(spinList);
-
-        // Create Active Time Spinners
-        startSpinner = (MaterialSpinner)findViewById(R.id.startTime);
-        endSpinner = (MaterialSpinner)findViewById(R.id.endTime);
-
-        // Set Active Time Spinner Colors
-        startSpinner.setBackgroundColor(getColor(R.color.cardview_light_background));
-        endSpinner.setBackgroundColor(getColor(R.color.cardview_light_background));
-
-
-        // Get String-Array of all time options and set Active Time spinner values
-        String[] times = getResources().getStringArray(R.array.time_spinner);
-        List<String> timeList = new ArrayList<String>(Arrays.asList(times));
-        startSpinner.setItems(timeList);
-        endSpinner.setItems(timeList);
     }
+
+    private void setupTypeFAB(){
+        if(fabType!=null && fabMenu3!=null){
+            View customView = View.inflate(this, R.layout.custom_type_layout, null);
+            fabMenuView = customView;
+            fabMenu3.setCustomView(customView);
+            fabMenu3.bindAncherView(fabType);
+
+            //set up viewpager that to display various food truck types
+            typePager = (ViewPager)fabMenuView.findViewById(R.id.type_viewPager);
+            typePager.setAdapter(new TruckTypePagerAdapter(this));
+
+            TextView okTextView = (TextView)findViewById(R.id.ok_type_tv);
+            TextView cancelTextView = (TextView)findViewById(R.id.cancel_type_tv);
+            okTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    stepThreeTV.setText(truckTextViews[typePager.getCurrentItem()]);
+                    fabType.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.step_complete)));
+                    fabType.setImageResource(R.drawable.ic_check_white_24dp);
+                    fabMenu3.closeMenu();
+                } });
+
+            cancelTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fabMenu3.closeMenu(); } });
+        }
+    }
+
+    private void setupCameraFab() {
+        if (fabImage != null && fabMenu4 != null) {
+            View customView = View.inflate(this, R.layout.custom_image_layout, null);
+            fabMenuView = customView;
+            fabMenu4.setCustomView(customView);
+            fabMenu4.bindAncherView(fabImage);
+
+            //initialize buttons used for retrieving truck and menu images
+            Button truckFromDevice = (Button)fabMenuView.findViewById(R.id.truck_device);
+            Button truckFromCamera = (Button)fabMenuView.findViewById(R.id.truck_camera);
+            Button menuFromDevice = (Button)fabMenuView.findViewById(R.id.menu_device);
+            Button menuFromCamera = (Button)fabMenuView.findViewById(R.id.menu_camera);
+
+            truckFromDevice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "Truck image from storage", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            truckFromCamera.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "Truck image from camera", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
+            menuFromDevice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "Menu image from storage", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
+            menuFromCamera.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "Menu image from camera", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
+
+            TextView okTextView = (TextView) fabMenuView.findViewById(R.id.ok_tv);
+            TextView cancelTextView = (TextView) fabMenuView.findViewById(R.id.cancel_tv);
+            okTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fabMenu4.closeMenu();
+                    stepFourTV.setText("Complete");
+                    fabImage.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.step_complete)));
+                    fabImage.setImageResource(R.drawable.ic_check_white_24dp);
+                }
+            });
+
+            cancelTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fabMenu4.closeMenu();
+                }
+            });
+        }
+    }
+
+
+
+    private String getAddressFromLatLng(){
+        Geocoder geocoder;
+        List<Address> addresses;
+        String address=""; String city=""; String state=""; String postalCode="";
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(driverLat, driverLng, 1);
+            address = addresses.get(0).getAddressLine(0);
+            city = addresses.get(0).getLocality();
+            state = addresses.get(0).getAdminArea();
+            postalCode = addresses.get(0).getPostalCode();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return address+" "+city+", "+state.substring(0, 2)+" "+postalCode;
+    }
+
 
 
     /** Grabs GPS coordinates of Driver user and posts the marker to the map */
@@ -132,7 +332,7 @@ public class DriverActivity extends AppCompatActivity {
             @Override
             public void onMapReady(GoogleMap gMap) {
                 googleMap=gMap;
-                LatLng eventCoords = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
+                LatLng eventCoords = new LatLng(driverLat, driverLng);
                 googleMap.addMarker(new MarkerOptions().position(eventCoords).title("Current Loc"));
                 CameraUpdate update = CameraUpdateFactory.newLatLngZoom(eventCoords, 15);
                 googleMap.animateCamera(update);
@@ -141,13 +341,14 @@ public class DriverActivity extends AppCompatActivity {
     }
 
 
+
     // TODO Create an 'X' on the captured image. Giving the driver the option to not save it
     /** Create camera buttons and add onClickListeners */
-    private void setupCameraButtons() {
+   /* private void setupCameraButtons() {
         ImageButton uploadTruckPhotoBtn, captureTruckPhotoBtn,
                     uploadMenuPhotoBtn, captureMenuPhotoBtn;
 
-        /* If the user has a camera feature, enable the CAPTURE buttons */
+        /* If the user has a camera feature, enable the CAPTURE buttons
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             // Create button to CAPTURE TRUCK image from camera
             captureTruckPhotoBtn = (ImageButton) findViewById(R.id.camera_truck_button);
@@ -177,7 +378,7 @@ public class DriverActivity extends AppCompatActivity {
                 }
             });
 
-            /* Create button to CAPTURE MENU photo from camera */
+             Create button to CAPTURE MENU photo from camera
             captureMenuPhotoBtn = (ImageButton) findViewById(R.id.camera_menu_button);
             captureMenuPhotoBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -209,7 +410,7 @@ public class DriverActivity extends AppCompatActivity {
 
         }
 
-        /* Create button to UPLOAD TRUCK photo from phone gallery */
+        /* Create button to UPLOAD TRUCK photo from phone gallery
         uploadTruckPhotoBtn = (ImageButton) findViewById(R.id.upload_truck_button);
         uploadTruckPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,7 +419,7 @@ public class DriverActivity extends AppCompatActivity {
             }
         });
 
-        /* Create button to UPLOAD MENU photo from gallery */
+        /* Create button to UPLOAD MENU photo from gallery
         uploadMenuPhotoBtn = (ImageButton) findViewById(R.id.upload_menu_button);
         uploadMenuPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,7 +427,7 @@ public class DriverActivity extends AppCompatActivity {
 
             }
         });
-    }
+    }*/
 
 
     /**
@@ -396,5 +597,44 @@ public class DriverActivity extends AppCompatActivity {
                 bitmap,
                 f.getName(),
                 f.getName());
+    }
+    class TruckTypePagerAdapter extends PagerAdapter {
+
+        Context mContext;
+        LayoutInflater mLayoutInflater;
+
+        public TruckTypePagerAdapter(Context context) {
+            mContext = context;
+            mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public int getCount() {
+            return truckDrawables.length;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == ((LinearLayout) object);
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            View itemView = mLayoutInflater.inflate(R.layout.pager_item, container, false);
+
+            ImageView imageView = (ImageView) itemView.findViewById(R.id.typeImage);
+            imageView.setImageResource(truckDrawables[position]);
+
+            TextView typeTextView = (TextView)itemView.findViewById(R.id.typeTextView);
+            typeTextView.setText(truckTextViews[position]);
+            container.addView(itemView);
+
+            return itemView;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((LinearLayout) object);
+        }
     }
 }

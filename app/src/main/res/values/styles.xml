@@ -8,10 +8,4 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name = "truck_switch">
-        <item name = "colorControlActivated">
-            #00820f
-        </item>
-    </style>
-
 </resources>
