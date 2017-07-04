@@ -23,8 +23,8 @@
             android:layout_height="wrap_content"
             android:text="Upload Truck Image"
             android:textColor="@color/accent"
-            android:layout_marginBottom="15dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:textSize="20sp"/>
 
         <LinearLayout
@@ -61,14 +61,6 @@
         </LinearLayout>
 
 
-
-        <ImageView
-            android:id="@+id/menu_imageView"
-            android:layout_width="match_parent"
-            android:layout_height="225dp"
-            android:layout_marginTop="10dp"
-            android:visibility="gone"
-            />
 
         <TextView
             android:layout_width="match_parent"
@@ -112,21 +104,44 @@
 
         </LinearLayout>
 
-
-        <ImageView
-            android:id="@+id/truck_imageView"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="225dp"
-            android:layout_marginTop="10dp"
-            android:visibility="gone"
-            />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp">
+
+
+            <com.example.android.hackathon.Utilities.RoundedImageView
+                android:id="@+id/truck_imageView"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:text="From Device"
+                android:textColor="@color/white"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground" />
+
+            <com.example.android.hackathon.Utilities.RoundedImageView
+                android:id="@+id/menu_imageView"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="15dp"
+                android:text="From Camera"
+                android:textColor="@color/white"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground" />
+
+        </LinearLayout>
+
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="15dp"
             android:gravity="right">
             <TextView
                 android:id="@+id/cancel_tv"
@@ -154,7 +169,6 @@
                 android:clickable="true"/>
 
         </LinearLayout>
-
 
     </LinearLayout>
 

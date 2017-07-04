@@ -11,10 +11,9 @@
     <color name="white">#ffffff</color>
     <color name="pink">#ff9dfc</color>
 
-    <color name="colorWhite">#FFFFFF</color>
 
     <color name="black_overlay">#88000000</color>
-    <color name="trans_black">#77000000</color>
+    <color name="trans_black">#66000000</color>
     <color name="step_complete">#00CC00</color>
 
 
