@@ -81,11 +81,11 @@ public class DriverActivity extends Activity {
     private ViewPager typePager;
     private Button truckFromDevice, truckFromCamera, menuFromDevice, menuFromCamera;
     int[] truckDrawables = {
-            R.drawable.burger_truck_marker,
-            R.drawable.pizza_truck_marker,
-            R.drawable.spec_truck_marker,
-            R.drawable.taco_truck_marker,
-            R.drawable.twinkie_truck_marker
+            R.drawable.burger_truck,
+            R.drawable.pizza_truck,
+            R.drawable.spec_truck,
+            R.drawable.taco_truck,
+            R.drawable.twinkie_truck
     };
     String[] truckTextViews = {
             "American", "Pizza", "Speciality", "Mexican", "Desserts"
