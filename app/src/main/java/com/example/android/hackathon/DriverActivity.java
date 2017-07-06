@@ -5,26 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.location.Address;
 import android.location.Geocoder;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.FileProvider;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,7 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.hackathon.Utilities.GPSTracker;
-import com.example.android.hackathon.Utilities.RoundedImageView;
+import com.example.android.hackathon.Utilities.Imageutils;
 import com.example.android.hackathon.Utilities.UploadFileAsync;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,43 +36,37 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hlab.fabrevealmenu.view.FABRevealMenu;
+
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 /**
  *  Activity for the Driver. Provides the option to set truck name, food type, active time,
  * truck photo, and truck menu.
  */
 // TODO Redo everything...
-public class DriverActivity extends Activity {
-    private static final int GET_TRUCK_FROM_GALLERY = 1;
-    private static final int REQUEST_TRUCK_IMAGE_CAPTURE = 2;
-    private static final int GET_MENU_FROM_GALLERY = 3;
-    private static final int REQUEST_MENU_IMAGE_CAPTURE = 4;
-
+public class DriverActivity extends Activity implements Imageutils.ImageAttachmentListener {
+    private static final int REQUEST_TRUCK_IMAGE = 1;
+    private static final int REQUEST_MENU_IMAGE = 2;
     private MapView driver_map;
     private GoogleMap googleMap;
-    private GPSTracker gpsTracker;
-    private RoundedImageView menuImage, truckImage;
-    private String mCurrentPhotoPath;
     private TextView stepOneTV, stepTwoTV, stepThreeTV, stepFourTV;
 
     private FloatingActionButton fabName, fabLocation, fabType, fabImage;
-
     private String truckName;
     private double driverLat, driverLng;
     private View fabMenuView;
     private FABRevealMenu fabMenu1, fabMenu2, fabMenu3, fabMenu4;
     private TextView currentLocationTV;
     private ViewPager typePager;
-    private Button truckFromDevice, truckFromCamera, menuFromDevice, menuFromCamera;
+    private ImageView truck, menu;
+    private Imageutils imageutils;
+    private Bitmap bitmap;
+    private String file_name;
+
     int[] truckDrawables = {
             R.drawable.burger_truck_marker,
             R.drawable.pizza_truck_marker,
@@ -106,9 +93,12 @@ public class DriverActivity extends Activity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.truck_info_reveal);
+
+        imageutils = new Imageutils(this);
         GPSTracker gpsTracker = new GPSTracker(this);
         driverLat = gpsTracker.getLatitude();
         driverLng = gpsTracker.getLongitude();
+
         // Initialize the Driver's position
         MapsInitializer.initialize(this);
         fabMenu1 = (FABRevealMenu)findViewById(R.id.reveal);
@@ -131,8 +121,6 @@ public class DriverActivity extends Activity {
         setupCameraFab();
 
 
-        // Create Camera buttons
-        //setupCameraButtons();
     }
 
     private void setupFabs(){
@@ -185,6 +173,7 @@ public class DriverActivity extends Activity {
     }
 
 
+    //sets up location floating action button,
     private void setupLocationFAB(){
         if(fabLocation!=null && fabMenu2!=null) {
             View customView = View.inflate(this, R.layout.custom_location_layout, null);
@@ -212,6 +201,7 @@ public class DriverActivity extends Activity {
 
     }
 
+    //sets up the food type floating action button
     private void setupTypeFAB(){
         if(fabType!=null && fabMenu3!=null){
             View customView = View.inflate(this, R.layout.custom_type_layout, null);
@@ -241,79 +231,27 @@ public class DriverActivity extends Activity {
         }
     }
 
+    //Sets up the image floating action button
     private void setupCameraFab() {
         if (fabImage != null && fabMenu4 != null) {
             View customView = View.inflate(this, R.layout.custom_image_layout, null);
             fabMenuView = customView;
             fabMenu4.setCustomView(customView);
             fabMenu4.bindAncherView(fabImage);
-            setupCameraButtons();
 
-            truckFromDevice.setOnClickListener(new View.OnClickListener() {
+            truck = (ImageView) fabMenuView.findViewById(R.id.truck);
+            menu = (ImageView) fabMenuView.findViewById(R.id.menu);
+            truck.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), "Truck image from storage", Toast.LENGTH_SHORT).show();
+                    imageutils.imagepicker(REQUEST_TRUCK_IMAGE);
                 }
             });
 
-            truckFromCamera.setOnClickListener(new View.OnClickListener() {
+            menu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Create an Intent for Image Capturing, start activity for capturing
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                        // Create the File where the photo should go
-                        File photoFile = null;
-                        try {
-                            photoFile = createImageFile(REQUEST_TRUCK_IMAGE_CAPTURE);
-                        } catch (IOException ex) {
-                            // Error occurred while creating the File
-
-                        }
-                        // Continue only if the File was successfully created
-                        if (photoFile != null) {
-                            Uri photoURI = FileProvider.getUriForFile(DriverActivity.this,
-                                    "com.example.android.hackathon.fileprovider", photoFile);
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                            startActivityForResult(takePictureIntent, REQUEST_TRUCK_IMAGE_CAPTURE);
-                        }
-                    }
-                }
-            });
-
-            menuFromDevice.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), "Menu image from storage", Toast.LENGTH_SHORT).show();
-
-                }
-            });
-
-            menuFromCamera.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Create an Intent for Image Capturing, start activity for capturing
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                            // Create the File where the photo should go
-                            File photoFile = null;
-                            try {
-                                photoFile = createImageFile(REQUEST_MENU_IMAGE_CAPTURE);
-                            } catch (IOException ex) {
-                                // Error occurred while creating the File
-
-                            }
-                            // Continue only if the File was successfully created
-                            if (photoFile != null) {
-                                Uri photoURI = FileProvider.getUriForFile(DriverActivity.this,
-                                        "com.example.android.hackathon.fileprovider",
-                                        photoFile);
-                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                startActivityForResult(takePictureIntent, REQUEST_MENU_IMAGE_CAPTURE);
-                            }
-                        }
-                    }
+                    imageutils.imagepicker(REQUEST_MENU_IMAGE);
                 }
             });
 
@@ -327,6 +265,7 @@ public class DriverActivity extends Activity {
                     stepFourTV.setText("Complete");
                     fabImage.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.step_complete)));
                     fabImage.setImageResource(R.drawable.ic_check_white_24dp);
+
                 }
             });
 
@@ -338,19 +277,8 @@ public class DriverActivity extends Activity {
             });
         }
     }
-    private void setupCameraButtons() {
-        //initialize buttons used for retrieving truck and menu images
-        truckFromDevice = (Button) fabMenuView.findViewById(R.id.truck_device);
-        truckFromCamera = (Button) fabMenuView.findViewById(R.id.truck_camera);
-        menuFromDevice = (Button) fabMenuView.findViewById(R.id.menu_device);
-        menuFromCamera = (Button) fabMenuView.findViewById(R.id.menu_camera);
 
-        menuImage = (RoundedImageView) fabMenuView.findViewById(R.id.menu_imageView);
-        truckImage = (RoundedImageView) fabMenuView.findViewById(R.id.truck_imageView);
-    }
-
-
-
+    /**Uses driver lat and lng to retrieve corresponding address*/
     private String getAddressFromLatLng(){
         Geocoder geocoder;
         List<Address> addresses;
@@ -374,7 +302,6 @@ public class DriverActivity extends Activity {
     }
 
 
-
     /** Grabs GPS coordinates of Driver user and posts the marker to the map */
     private void setupMap(){
         driver_map.getMapAsync(new OnMapReadyCallback() {
@@ -389,6 +316,7 @@ public class DriverActivity extends Activity {
         });
     }
 
+
     /**
      *  Called due to Driver user selecting the Capture Photo button or Upload From Gallery button.
      * @param requestCode
@@ -398,183 +326,30 @@ public class DriverActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Checks requestCode to see if user would like to UPLOAD TRUCK photo from gallery
-        if(requestCode == GET_TRUCK_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
-            // TODO Save image to a database
-
-            // Create Uri for the selected image in gallery
-            Uri selectedImage = data.getData();
-            Bitmap bitmap = null;
-
-            try {
-                // set image to
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                menuImage.setImageBitmap(bitmap);
-                menuImage.setVisibility(View.VISIBLE);
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        // Checks requestCode to see if user is requesting to CAPTURE TRUCK image with camera
-        else if (requestCode == REQUEST_TRUCK_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            try {
-                setImageUpright(mCurrentPhotoPath);
-                // set menuImage to upright bitmap
-                menuImage.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
-                menuImage.setVisibility(View.VISIBLE);
-                // TODO Make this not test code...
-                new UploadFileAsync().execute(mCurrentPhotoPath, "0_TestTruck", "Truck_1").get();
-
-            } catch (IOException ex) {
-                Log.e("IMG_SAVE", "Error trying to save image");
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-
-            galleryAddPic();
-        }
-        // Checks requestCode to see if user would like to UPLOAD MENU image from gallery
-        else if(requestCode == GET_MENU_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
-            // TODO Save image to a database
-
-            // Create Uri for the selected image in gallery
-            Uri selectedImage = data.getData();
-            Bitmap bitmap = null;
-
-            try {
-                // Create bitmap from selected image
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                menuImage.setImageBitmap(bitmap);
-                menuImage.setVisibility(View.VISIBLE);
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        // Checks requestCode to see if user is requesting to CAPTURE MENU image with camera
-        else if(requestCode == REQUEST_MENU_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            try {
-                setImageUpright(mCurrentPhotoPath);
-                // set menuImage to upright bitmap
-                menuImage.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
-                menuImage.setVisibility(View.VISIBLE);
-                // TODO Make this not test code...
-                new UploadFileAsync().execute(mCurrentPhotoPath, "0_TestTruck", "Menu_1").get();
-
-            } catch (IOException ex) {
-                Log.e("IMG_SAVE", "Error trying to save image");
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-
-            galleryAddPic();
-        }
-
+        imageutils.onActivityResult(requestCode, resultCode, data);
     }
 
 
-    /** Sets the image stored at 'imagepath' to the upright position */
-    private static void setImageUpright(String imagepath) throws IOException{
-        FileOutputStream fos = null;
-        try {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagepath);
-            ExifInterface ei = new ExifInterface(imagepath);
-
-            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED);
-
-            switch (orientation) {
-
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    bitmap = rotateBitmap(bitmap, 90);
-                    break;
-
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    bitmap = rotateBitmap(bitmap, 180);
-                    break;
-
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    bitmap = rotateBitmap(bitmap, 270);
-                    break;
-
-                case ExifInterface.ORIENTATION_NORMAL:
-
-                default:
-                    break;
-            }
-
-            // Resave image as upright
-            File f = new File(imagepath);
-            fos = new FileOutputStream(f);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
-        } catch (IOException e) {
-            e.getMessage();
-        } finally {
-            fos.close();
+    @Override
+    public void image_attachment(int from, String filename, Bitmap file, Uri uri) {
+        this.bitmap=file;
+        this.file_name=filename;
+        String prefix="";
+        if(from==REQUEST_TRUCK_IMAGE) {
+            truck.setImageBitmap(file);
+            prefix="TRUCK_";
         }
-    }
-
-    /** Rotates the parameter bitmap by "angle" degrees and returns the new bitmap */
-    private static Bitmap rotateBitmap(Bitmap bitmap, float angle) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,bitmap.getWidth(),bitmap.getHeight(),true);
-        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0,
-                scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-
-        return rotatedBitmap;
-    }
-
-    /** Creates an image file for the picture that was taken */
-    private File createImageFile(int captureId) throws IOException {
-        String prefix;
-
-        // Set file prefix
-        if (captureId == REQUEST_MENU_IMAGE_CAPTURE)
-            prefix = "MENU_";
-        else
-            prefix = "TRUCK_";
-
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = prefix + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
+        else {
+            menu.setImageBitmap(file);
+            prefix="MENU_";
+        }
+        String path =  Environment.getExternalStorageDirectory() + File.separator + "ChosenImage" + File.separator;
+        imageutils.createImage(file,filename,path,false);
+        new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",prefix);
     }
 
 
-    /** Adds currently taken picture to the photo gallery */
-    private void galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath);
-        Bitmap bitmap = BitmapFactory.decodeFile(f.getPath());
-        Uri contentUri = Uri.fromFile(f);
-        MediaStore.Images.Media.insertImage(
-                getContentResolver(),
-                bitmap,
-                f.getName(),
-                f.getName());
-    }
-
-
-
-    class TruckTypePagerAdapter extends PagerAdapter {
+    private class TruckTypePagerAdapter extends PagerAdapter {
 
         Context mContext;
         LayoutInflater mLayoutInflater;

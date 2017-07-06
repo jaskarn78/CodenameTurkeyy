@@ -61,7 +61,8 @@ public class UserType extends AppCompatActivity {
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.CAMERA,
                     Manifest.permission.INTERNET,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
             };
             // Set message for requesting permissions
             EasyPermissions.requestPermissions(this, "This app requires location services",
