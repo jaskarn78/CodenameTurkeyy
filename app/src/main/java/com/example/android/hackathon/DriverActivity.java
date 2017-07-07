@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,7 +40,6 @@ import com.hlab.fabrevealmenu.view.FABRevealMenu;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -56,16 +56,15 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
     private TextView stepOneTV, stepTwoTV, stepThreeTV, stepFourTV;
 
     private FloatingActionButton fabName, fabLocation, fabType, fabImage;
-    private String truckName;
-    private double driverLat, driverLng;
-    private View fabMenuView;
     private FABRevealMenu fabMenu1, fabMenu2, fabMenu3, fabMenu4;
+    private Truck truckObj;
+    private Button submitButton;
+    private View fabMenuView;
     private TextView currentLocationTV;
     private ViewPager typePager;
     private ImageView truck, menu;
     private Imageutils imageutils;
-    private Bitmap bitmap;
-    private String file_name;
+    private double driverLat, driverLng;
 
     int[] truckDrawables = {
             R.drawable.burger_truck_marker,
@@ -94,6 +93,7 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.truck_info_reveal);
 
+        truckObj = new Truck();
         imageutils = new Imageutils(this);
         GPSTracker gpsTracker = new GPSTracker(this);
         driverLat = gpsTracker.getLatitude();
@@ -119,8 +119,30 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
         setupMap();
         setupTypeFAB();
         setupCameraFab();
+        setupSubmitButton();
 
+    }
 
+    private void setupSubmitButton(){
+        submitButton = (Button)findViewById(R.id.submit_button);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //verify that required fields are not null and push to db
+                if(truckObj.getName()!=null && truckObj.getType()!=null && truckObj.getLat()!=0.0
+                        && truckObj.getLong()!=0.0 && truckObj.getTruckImage()!=null && truckObj.getMenuImage()!=null) {
+                    String insertTruck = "INSERT INTO food_truck(truck_status, truck_name, truck_type, " +
+                            "truck_lat, truck_lng, truck_rating, truck_image, truck_menu) VALUES(" +
+                            "'" + truckObj.getStatus() + "', '" + truckObj.getName() + "', '" + truckObj.getType() + "', " +
+                            truckObj.getLat() + ", " + truckObj.getLong() + ", 1, '" +truckObj.getTruckImage()+
+                             "', '" +truckObj.getMenuImage()+ "');";
+                    new QueryJSONArray().execute(insertTruck);
+                    Toast.makeText(getApplicationContext(), "Truck pushed to db", Toast.LENGTH_SHORT).show();
+                }
+                //if required field is null, display message
+                else Toast.makeText(getApplicationContext(), "Please eomplete all steps", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setupFabs(){
@@ -150,13 +172,15 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
             TextView okTextView = (TextView)fabMenuView.findViewById(R.id.okName_tv);
             TextView cancelTextView = (TextView)fabMenuView.findViewById(R.id.cancelName_tv);
             final EditText nameEditText = (EditText)fabMenuView.findViewById(R.id.enter_name);
+
+            //close the view, assign truck name to editText field and set FAB to green
             okTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(nameEditText.getText().toString().length()>1) {
                         fabMenu1.closeMenu();
-                        truckName = nameEditText.getText().toString();
-                        stepOneTV.setText(truckName);
+                        truckObj.setName(nameEditText.getText().toString());
+                        stepOneTV.setText(truckObj.getName());
                         fabName.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.step_complete)));
                         fabName.setImageResource(R.drawable.ic_check_white_24dp);
                     }
@@ -187,7 +211,10 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
             okTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    truckObj.setLat(driverLat);
+                    truckObj.setLong(driverLng);
                     stepTwoTV.setText(currentLocationTV.getText());
+
                     fabLocation.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.step_complete)));
                     fabLocation.setImageResource(R.drawable.ic_check_white_24dp);
                     fabMenu2.closeMenu();
@@ -218,6 +245,7 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
             okTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    truckObj.setType(truckTextViews[typePager.getCurrentItem()]);
                     stepThreeTV.setText(truckTextViews[typePager.getCurrentItem()]);
                     fabType.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.step_complete)));
                     fabType.setImageResource(R.drawable.ic_check_white_24dp);
@@ -332,23 +360,26 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
 
     @Override
     public void image_attachment(int from, String filename, Bitmap file, Uri uri) {
-        this.bitmap=file;
-        this.file_name=filename;
         String prefix="";
+        String path =  Environment.getExternalStorageDirectory() + File.separator + prefix + File.separator;
+        imageutils.createImage(file,filename,path,false);
         if(from==REQUEST_TRUCK_IMAGE) {
             truck.setImageBitmap(file);
             prefix="TRUCK_";
+            truckObj.setTruckImage(prefix);
+            new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",truckObj.getTruckImage());
         }
         else {
             menu.setImageBitmap(file);
             prefix="MENU_";
+            truckObj.setMenuImage(prefix);
+            new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",truckObj.getMenuImage());
+
         }
-        String path =  Environment.getExternalStorageDirectory() + File.separator + "ChosenImage" + File.separator;
-        imageutils.createImage(file,filename,path,false);
-        new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",prefix);
+        truckObj.setStatus("1");
     }
 
-
+    /**Used to set up scrollable list of truck types*/
     private class TruckTypePagerAdapter extends PagerAdapter {
 
         Context mContext;

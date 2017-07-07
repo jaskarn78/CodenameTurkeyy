@@ -43,6 +43,7 @@ import java.util.concurrent.ExecutionException;
  *  food trucks and expand on their information.
  */
 public class UserActivity extends AppCompatActivity implements OnMapReadyCallback {
+    private static final String URL_PATH="http://jagpal-development.com/food_truck/trucks/0_TestTruck/";
     private String allTrucksQuery;
 
     private ArrayList<Truck> truckList;
@@ -55,61 +56,6 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
     private int clickedPosition=0;
     private ListView listView;
 
-    /** Class to store the Truck information. */
-    private class Truck {
-        private String name;
-        private String type;
-        private int status;
-        private String menu;
-        private String truckImage;
-        private double lat;
-        private double lng;
-        private int icon;
-
-
-        public void setName(String val) { name = val; }
-        public void setType(String val) { type = val; }
-        public void setStatus(int val) { status = val; }
-        public void setMenu(String val) { menu = val; }
-        public void setTruckImage(String val) { truckImage = val; }
-        public void setLat(double val) { lat = val; }
-        public void setLong(double val) { lng = val; }
-        public void setIcon(String val) {
-            try {
-                switch (val) {
-                    case "Mexican":
-                        icon = R.drawable.taco_truck_marker;
-                        break;
-                    case "American":
-                        icon = R.drawable.burger_truck_marker;
-                        break;
-                    case "Desserts":
-                        icon = R.drawable.twinkie_truck_marker;
-                        break;
-                    case "Seafood":
-                        icon = R.drawable.twinkie_truck_marker;
-                        break;
-                    case "Pizza":
-                        icon = R.drawable.pizza_truck_marker;
-                        break;
-                    default:
-                        icon = R.drawable.spec_truck_marker;
-                }
-            } catch (Resources.NotFoundException ex) {
-                ex.getMessage();
-            }
-        }
-
-        public String getName() {return name; }
-        public String getType() {return type; }
-        public int getStatus() {return status; }
-        public String getMenu() {return menu; }
-        public String getTruckImage() {return truckImage; }
-        public double getLat() {return lat; }
-        public double getLong() {return lng; }
-        public int getIcon() { return icon; }
-
-    }
     /**
      *  Creates the UserActivity.
      * @param savedInstanceState
@@ -166,9 +112,16 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Truck temp = new Truck();
                     temp.setName(json_data.getString("truck_name"));
                     temp.setType(json_data.getString("truck_type"));
-                    temp.setMenu(json_data.getString("truck_menu"));
-                    temp.setStatus(json_data.getInt("truck_status"));
-                    temp.setTruckImage(json_data.getString("truck_image"));
+                    temp.setStatus(json_data.getString("truck_status"));
+
+                    //temporary, will update when more images loaded onto server
+                    if(json_data.getString("truck_image").length()<30) {
+                        temp.setMenu(URL_PATH+json_data.getString("truck_menu")+".jpg");
+                        temp.setTruckImage(URL_PATH+json_data.getString("truck_image")+".jpg");
+                    }else{
+                        temp.setMenu(json_data.getString("truck_menu"));
+                        temp.setTruckImage(json_data.getString("truck_image"));
+                    }
                     temp.setLat(json_data.getDouble("truck_lat"));
                     temp.setLong(json_data.getDouble("truck_lng"));
                     temp.setIcon(temp.getType());
@@ -184,7 +137,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             truckButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    profileActivity();
+                    profileActivity(clickedPosition);
                 }
             });
 
@@ -304,13 +257,12 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             tvName.setText(truck.getName());
             tvHome.setText(truck.getType());
             Glide.with(getApplicationContext()).load(truck.getTruckImage()).into(tvImage);
-
             //  Create an OnClickListener for the selected truck and push food truck information
             // to intent, which will be used to display the food truck page.
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    profileActivity();
+                    profileActivity(position);
                 }
             });
 
@@ -321,9 +273,10 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     /** Creates the intent to transfer to the Profile Activity */
-    private void profileActivity() {
+    private void profileActivity(int clickedPosition) {
         Intent intent = new Intent(UserActivity.this, ProfileActivity.class);
         intent.putExtra("truckName", truckList.get(clickedPosition).getName());
+        intent.putExtra("truckStatus", truckList.get(clickedPosition).getStatus());
         intent.putExtra("truckImage", truckList.get(clickedPosition).getTruckImage());
         intent.putExtra("menuImage", truckList.get(clickedPosition).getMenu());
         intent.putExtra("type", truckList.get(clickedPosition).getType());

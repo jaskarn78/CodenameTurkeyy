@@ -8,6 +8,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdate;
@@ -18,7 +19,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import static com.example.android.hackathon.R.id.status;
+import static com.example.android.hackathon.R.id.truck_status;
 
 /**
  *   Create the Activity for the Driver Profile Page, where users will view the food truck
@@ -58,7 +59,9 @@ public class ProfileActivity extends AppCompatActivity {
         String truckImage = getIntent().getStringExtra("truckImage");
         String truckName = getIntent().getStringExtra("truckName");
         String menuImage = getIntent().getStringExtra("menuImage");
+        String truckStatus = getIntent().getStringExtra("truckStatus");
         String type = getIntent().getStringExtra("type");
+
 
         // Gather selected truck's latitude and longitude
         lat = getIntent().getDoubleExtra("lat", 0);
@@ -77,8 +80,13 @@ public class ProfileActivity extends AppCompatActivity {
         Glide.with(this).load(menuImage).into(menuImageView);
 
         // Get food truck's current status
-        TextView statusTxt = (TextView)findViewById(status);
-        statusTxt.setText("Status: Available");
+        TextView statusTxt = (TextView)findViewById(truck_status);
+        Toast.makeText(getApplicationContext(), statusTxt.getText(), Toast.LENGTH_SHORT).show();
+        /*if(truckStatus.equals("1"))
+            statusTxt.setText("Status: Available");
+        else statusTxt.setText("Status: Unavailable");
+
+        statusTxt.setText("Status: Available");*/
 
         // Get food truck's food type
         TextView typeTxt = (TextView)findViewById(R.id.type);

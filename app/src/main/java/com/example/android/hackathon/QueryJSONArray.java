@@ -1,7 +1,9 @@
 package com.example.android.hackathon;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,7 +24,6 @@ import java.util.ArrayList;
 public class QueryJSONArray extends AsyncTask<String, Void, ArrayList<JSONObject>> {
     private static final String PHP_URL =
             "http://jagpal-development.com/food_truck/php/android_post_query.php";
-
     private ArrayList<JSONObject> jsonList;
 
     /**
@@ -98,6 +99,10 @@ public class QueryJSONArray extends AsyncTask<String, Void, ArrayList<JSONObject
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<JSONObject> jsonList) {
     }
 
 }

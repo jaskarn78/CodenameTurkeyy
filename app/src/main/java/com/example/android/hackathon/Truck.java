@@ -8,9 +8,10 @@ import com.example.android.hackathon.R;
 public class Truck {
     private String name;
     private String type;
-    private int status;
+    private String status;
     private String menu;
     private String truckImage;
+    private String menuImage;
     private double lat;
     private double lng;
     private int icon;
@@ -18,9 +19,10 @@ public class Truck {
 
     public void setName(String val) { name = val; }
     public void setType(String val) { type = val; }
-    public void setStatus(int val) { status = val; }
+    public void setStatus(String val) { status = val; }
     public void setMenu(String val) { menu = val; }
     public void setTruckImage(String val) { truckImage = val; }
+    public void setMenuImage(String val){ menuImage = val;}
     public void setLat(double val) { lat = val; }
     public void setLong(double val) { lng = val; }
     public void setIcon(String val) {
@@ -51,9 +53,10 @@ public class Truck {
 
     public String getName() {return name; }
     public String getType() {return type; }
-    public int getStatus() {return status; }
+    public String getStatus() {return status; }
     public String getMenu() {return menu; }
     public String getTruckImage() {return truckImage; }
+    public String getMenuImage(){return menuImage;}
     public double getLat() {return lat; }
     public double getLong() {return lng; }
     public int getIcon() { return icon; }

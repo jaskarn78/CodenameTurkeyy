@@ -9,8 +9,8 @@
     android:background="@color/white">
 
     <LinearLayout
-        android:layout_width="360dp"
-        android:layout_height="350dp"
+        android:layout_width="380dp"
+        android:layout_height="370dp"
         android:gravity="center"
         android:orientation="vertical"
         >
@@ -52,7 +52,7 @@
             <ImageView
                 android:id="@+id/truck"
                 android:layout_width="160dp"
-                android:layout_height="140dp"
+                android:layout_height="150dp"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
                 android:textColor="@color/black"
@@ -65,7 +65,7 @@
             <ImageView
                 android:id="@+id/menu"
                 android:layout_width="160dp"
-                android:layout_height="140dp"
+                android:layout_height="150dp"
                 android:layout_marginStart="2dp"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"

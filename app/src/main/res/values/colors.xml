@@ -12,9 +12,7 @@
     <color name="pink">#ff9dfc</color>
 
 
-    <color name="black_overlay">#88000000</color>
     <color name="trans_black">#66000000</color>
-    <color name="border_black">#33000000</color>
 
     <color name="step_complete">#00CC00</color>
 
