@@ -1,5 +1,4 @@
 package com.example.android.hackathon;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -134,8 +133,8 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
                     String insertTruck = "INSERT INTO food_truck(truck_status, truck_name, truck_type, " +
                             "truck_lat, truck_lng, truck_rating, truck_image, truck_menu) VALUES(" +
                             "'" + truckObj.getStatus() + "', '" + truckObj.getName() + "', '" + truckObj.getType() + "', " +
-                            truckObj.getLat() + ", " + truckObj.getLong() + ", 1, '" +truckObj.getTruckImage()+truckObj.getName()+
-                             "', '" +truckObj.getMenuImage()+truckObj.getName()+ "');";
+                            truckObj.getLat() + ", " + truckObj.getLong() + ", 1, '" +truckObj.getTruckImage()+
+                             "', '" +truckObj.getMenuImage()+ "');";
                     Toast.makeText(getApplicationContext(), insertTruck, Toast.LENGTH_SHORT).show();
                     new QueryJSONArray().execute(insertTruck);
                     Toast.makeText(getApplicationContext(), "Truck pushed to db", Toast.LENGTH_SHORT).show();
@@ -181,7 +180,7 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
                     if(nameEditText.getText().toString().length()>1) {
                         fabMenu1.closeMenu();
                         stepOneTV.setText(nameEditText.getText().toString());
-                        truckObj.setName(nameEditText.getText().toString().replace(' ', '_'));
+                        truckObj.setName(nameEditText.getText().toString());
                         fabName.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.step_complete)));
                         fabName.setImageResource(R.drawable.ic_check_white_24dp);
                     }
@@ -361,22 +360,21 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
 
     @Override
     public void image_attachment(int from, String filename, Bitmap file, Uri uri) {
-        String prefix="";
+        String prefix=""; String fileName="";
         String path =  Environment.getExternalStorageDirectory() + File.separator + prefix + File.separator;
         imageutils.createImage(file,filename,path,false);
         if(from==REQUEST_TRUCK_IMAGE) {
             truck.setImageBitmap(file);
-            prefix="TRUCK_";
-            truckObj.setTruckImage(prefix);
-            new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",truckObj.getTruckImage()+truckObj.getName());
+            truckObj.setTruckImage("TRUCK_"+truckObj.getName());
+            fileName = truckObj.getTruckImage();
         }
         else {
             menu.setImageBitmap(file);
-            prefix="MENU_";
-            truckObj.setMenuImage(prefix);
-            new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",truckObj.getMenuImage()+truckObj.getName());
-
+            truckObj.setMenuImage("MENU_"+truckObj.getName());
+            fileName = truckObj.getMenuImage();
         }
+        new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",fileName);
+
         truckObj.setStatus("1");
     }
 
