@@ -53,7 +53,6 @@ public class ProfileActivity extends AppCompatActivity {
     private void setupTruckInformation() {
         //  Get position in array from Intent (for gathering the correct truck's information and
         // displaying it).
-        int position = getIntent().getIntExtra("position", 0);
 
         // Create lists for truck images, names, menus, types...
         String truckImage = getIntent().getStringExtra("truckImage");

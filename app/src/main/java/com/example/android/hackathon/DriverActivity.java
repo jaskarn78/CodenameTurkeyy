@@ -134,8 +134,9 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
                     String insertTruck = "INSERT INTO food_truck(truck_status, truck_name, truck_type, " +
                             "truck_lat, truck_lng, truck_rating, truck_image, truck_menu) VALUES(" +
                             "'" + truckObj.getStatus() + "', '" + truckObj.getName() + "', '" + truckObj.getType() + "', " +
-                            truckObj.getLat() + ", " + truckObj.getLong() + ", 1, '" +truckObj.getTruckImage()+
-                             "', '" +truckObj.getMenuImage()+ "');";
+                            truckObj.getLat() + ", " + truckObj.getLong() + ", 1, '" +truckObj.getTruckImage()+truckObj.getName()+
+                             "', '" +truckObj.getMenuImage()+truckObj.getName()+ "');";
+                    Toast.makeText(getApplicationContext(), insertTruck, Toast.LENGTH_SHORT).show();
                     new QueryJSONArray().execute(insertTruck);
                     Toast.makeText(getApplicationContext(), "Truck pushed to db", Toast.LENGTH_SHORT).show();
                 }
@@ -179,8 +180,8 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
                 public void onClick(View v) {
                     if(nameEditText.getText().toString().length()>1) {
                         fabMenu1.closeMenu();
-                        truckObj.setName(nameEditText.getText().toString());
-                        stepOneTV.setText(truckObj.getName());
+                        stepOneTV.setText(nameEditText.getText().toString());
+                        truckObj.setName(nameEditText.getText().toString().replace(' ', '_'));
                         fabName.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.step_complete)));
                         fabName.setImageResource(R.drawable.ic_check_white_24dp);
                     }
@@ -367,13 +368,13 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
             truck.setImageBitmap(file);
             prefix="TRUCK_";
             truckObj.setTruckImage(prefix);
-            new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",truckObj.getTruckImage());
+            new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",truckObj.getTruckImage()+truckObj.getName());
         }
         else {
             menu.setImageBitmap(file);
             prefix="MENU_";
             truckObj.setMenuImage(prefix);
-            new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",truckObj.getMenuImage());
+            new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",truckObj.getMenuImage()+truckObj.getName());
 
         }
         truckObj.setStatus("1");
