@@ -4,13 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/loginbg"
     android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/revealFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/loginbg"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

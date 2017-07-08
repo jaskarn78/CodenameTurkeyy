@@ -19,7 +19,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import static com.example.android.hackathon.R.id.truck_status;
 
 /**
  *   Create the Activity for the Driver Profile Page, where users will view the food truck
@@ -79,13 +78,18 @@ public class ProfileActivity extends AppCompatActivity {
         Glide.with(this).load(menuImage).into(menuImageView);
 
         // Get food truck's current status
-        TextView statusTxt = (TextView)findViewById(truck_status);
+        TextView statusTxt = (TextView)findViewById(R.id.truck_status);
         Toast.makeText(getApplicationContext(), statusTxt.getText(), Toast.LENGTH_SHORT).show();
-        /*if(truckStatus.equals("1"))
+        if(truckStatus.equals("1")) {
             statusTxt.setText("Status: Available");
-        else statusTxt.setText("Status: Unavailable");
+            statusTxt.setTextColor(getColor(R.color.md_light_green_A400));
+        }
+        else {
+            statusTxt.setText("Status: Unavailable");
+            statusTxt.setTextColor(getColor(R.color.md_red_A400));
+        }
 
-        statusTxt.setText("Status: Available");*/
+        statusTxt.setText("Status: Available");
 
         // Get food truck's food type
         TextView typeTxt = (TextView)findViewById(R.id.type);
