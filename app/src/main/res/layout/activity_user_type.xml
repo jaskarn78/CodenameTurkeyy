@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:background="@color/transyellow"
+            android:background="@color/transAccent"
             android:orientation="horizontal"
             app:layout_widthPercent="85%">
 
@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:background="@color/transpurple"
+            android:background="@color/transPrimary"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
             app:layout_widthPercent="15%">

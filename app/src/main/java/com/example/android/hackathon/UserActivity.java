@@ -113,6 +113,9 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
                     temp.setName(json_data.getString("truck_name"));
                     temp.setType(json_data.getString("truck_type"));
                     temp.setStatus(json_data.getString("truck_status"));
+                    if(temp.getStatus().equals("1"))
+                        truckButton.setColorFilter(getColor(R.color.md_light_green_A400));
+                    else truckButton.setColorFilter(getColor(R.color.md_red_A400));
 
                     //temporary, will update when more images loaded onto server
                     if(json_data.getString("truck_image").length()<30) {
@@ -133,7 +136,8 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             TruckAdapter adapter = new TruckAdapter(this, truckList);
             listView.setAdapter(adapter);
 
-            // Create on click listener for the list of trucks
+
+            // Create on click listener to view profile of selected marker
             truckButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -199,7 +203,7 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
         //currentLocation.getLongitude();
         GPSTracker currentLocation = new GPSTracker(getApplicationContext());
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(38.579431, -121.479059)).zoom(18)
+                .target(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())).zoom(18)
                 .tilt(67.5f).bearing(314).build();
 
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -253,6 +257,9 @@ public class UserActivity extends AppCompatActivity implements OnMapReadyCallbac
             TextView tvName = (TextView) convertView.findViewById(R.id.truck_type_list);
             TextView tvHome = (TextView) convertView.findViewById(R.id.truck_name_list);
             ImageView tvImage = (ImageView) convertView.findViewById(R.id.truck_image_list);
+            ImageButton statusButton = (ImageButton)convertView.findViewById(R.id.truckfollowList);
+
+
             // Populate the data into the template view using the data object
             tvName.setText(truck.getName());
             tvHome.setText(truck.getType());

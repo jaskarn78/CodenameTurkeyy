@@ -133,16 +133,29 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
                     String insertTruck = "INSERT INTO food_truck(truck_status, truck_name, truck_type, " +
                             "truck_lat, truck_lng, truck_rating, truck_image, truck_menu) VALUES(" +
                             "'" + truckObj.getStatus() + "', '" + truckObj.getName() + "', '" + truckObj.getType() + "', " +
-                            truckObj.getLat() + ", " + truckObj.getLong() + ", 1, '" +truckObj.getTruckImage()+
-                             "', '" +truckObj.getMenuImage()+ "');";
+                            truckObj.getLat() + ", " + truckObj.getLong() + ", 1, '" +truckObj.getTruckImage().replace(" ", "")+
+                             "', '" +truckObj.getMenuImage().replace(" ", "")+ "');";
                     Toast.makeText(getApplicationContext(), insertTruck, Toast.LENGTH_SHORT).show();
                     new QueryJSONArray().execute(insertTruck);
+                    startDriverProfileActivity();
                     Toast.makeText(getApplicationContext(), "Truck pushed to db", Toast.LENGTH_SHORT).show();
+
                 }
                 //if required field is null, display message
                 else Toast.makeText(getApplicationContext(), "Please eomplete all steps", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void startDriverProfileActivity(){
+        Intent intent = new Intent(DriverActivity.this, DriverProfile.class);
+        intent.putExtra("truck_name", truckObj.getName());
+        intent.putExtra("truck_image", truckObj.getTruckImage().replace(" ", ""));
+        intent.putExtra("menu_image", truckObj.getMenuImage().replace(" ", ""));
+        intent.putExtra("truck_lat", truckObj.getLat());
+        intent.putExtra("truck_lng", truckObj.getLat());
+        intent.putExtra("truck_status", truckObj.getStatus());
+        startActivity(intent);
     }
 
     private void setupFabs(){
@@ -373,7 +386,7 @@ public class DriverActivity extends Activity implements Imageutils.ImageAttachme
             truckObj.setMenuImage("MENU_"+truckObj.getName());
             fileName = truckObj.getMenuImage();
         }
-        new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",fileName);
+        new UploadFileAsync().execute(imageutils.getPath(uri), "0_TestTruck",fileName.replace(" ", ""));
 
         truckObj.setStatus("1");
     }

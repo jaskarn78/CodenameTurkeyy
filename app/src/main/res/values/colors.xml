@@ -16,6 +16,8 @@
     <color name="trans2_black">#33000000</color>
 
     <color name="step_complete">#00CC00</color>
+    <color name="transAccent">#44FF4081</color>
+    <color name="transPrimary">#44BBDEFB</color>
 
 
 
